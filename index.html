@@ -1,0 +1,3245 @@
+<!-- Standalone Mirror of Dulce Arte Frontend Application -->
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dulce Arte | Alta Pastelería Artesanal</title>
+  
+  <!-- Google Fonts: Playfair Display + Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            cream: {
+              50: '#FAF8F5',
+              100: '#F5EFEB',
+              200: '#EFE7E0',
+              300: '#E4D6CA',
+              400: '#D5C1B2',
+            },
+            rosep: {
+              50: '#FDF7F8',
+              100: '#F8EBED',
+              200: '#E8C5C8',
+              300: '#D7A7AC',
+              400: '#C4888F',
+              500: '#B06871',
+            },
+            choco: {
+              700: '#5A3620',
+              800: '#4A2B18',
+              900: '#3D2314',
+              950: '#27160C',
+            },
+            goldp: {
+              200: '#F3E4BA',
+              300: '#E5CD89',
+              400: '#D4AF37',
+              500: '#C5A059',
+              600: '#A88440',
+            }
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          boxShadow: {
+            'luxury': '0 10px 30px -5px rgba(61, 35, 20, 0.08), 0 4px 6px -2px rgba(61, 35, 20, 0.03)',
+            'luxury-lg': '0 20px 40px -10px rgba(61, 35, 20, 0.12), 0 8px 16px -4px rgba(61, 35, 20, 0.04)',
+            'gold-glow': '0 0 20px rgba(197, 160, 89, 0.25)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    body {
+      background-color: #FAF8F5;
+      color: #3D2314;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #FAF8F5;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #E8C5C8;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #C5A059;
+    }
+    
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #3D2314 0%, #A88440 60%, #C5A059 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .kanban-col {
+      min-height: 480px;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+    .kanban-col.drag-over {
+      background-color: #F8EBED !important;
+      border-color: #C5A059 !important;
+    }
+    
+    .glass-nav {
+      background: rgba(250, 248, 245, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+  </style>
+</head>
+
+<body class="bg-cream-50 text-choco-900 antialiased selection:bg-rosep-200 selection:text-choco-950">
+
+  <!-- ========================================== -->
+  <!-- TOP BANNER & FAST VIEW SWITCHER -->
+  <!-- ========================================== -->
+  <aside aria-label="Aviso de demostración" class="bg-choco-950 text-cream-100 text-xs py-2 px-4 border-b border-goldp-600/30">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wider uppercase bg-goldp-500/20 text-goldp-300 border border-goldp-400/30">
+          Haute Pâtisserie
+        </span>
+        <span class="hidden sm:inline text-cream-200/80">Despachos Climatizados a 14°C en Santiago · Pedidos con 48h de antelación</span>
+      </div>
+
+      <!-- Quick Switcher Bar for Pair Programming Demo -->
+      <div class="flex items-center gap-3">
+        <div class="inline-flex p-0.5 bg-choco-900 rounded-full border border-goldp-500/30">
+          <button id="btnSwitchToClient" onclick="switchMainView('client')" class="px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 flex items-center gap-1.5 bg-goldp-500 text-choco-950 font-semibold shadow-sm">
+            <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i> Vista Cliente
+          </button>
+          <button id="btnSwitchToAdmin" onclick="window.location.href='/panel/'" class="px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 flex items-center gap-1.5 text-cream-200 hover:text-white">
+            <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i> Vista Admin (Taller)
+          </button>
+        </div>
+
+        <button onclick="openAuthModal()" id="navAuthBadgeBtn" class="flex items-center gap-1.5 text-xs text-rosep-200 hover:text-white transition-colors">
+          <i data-lucide="user" class="w-3.5 h-3.5"></i>
+          <span id="navAuthStatusLabel">Iniciar Sesión</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ========================================== -->
+  <!-- 🛍️ 1. VISTA DE CLIENTE (PORTAL PÚBLICO) -->
+  <!-- ========================================== -->
+  <div id="clientViewContainer" class="transition-opacity duration-300">
+    
+    <!-- Header / Navbar Cliente -->
+    <header class="sticky top-0 z-40 glass-nav border-b border-cream-200/80 shadow-sm transition-all duration-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+        
+        <!-- Brand Logo -->
+        <a href="#hero" class="flex items-center gap-3 group">
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-choco-900 to-choco-700 flex items-center justify-center text-goldp-400 shadow-md group-hover:scale-105 transition-transform duration-200 border border-goldp-500/40">
+            <i data-lucide="sparkles" class="w-6 h-6"></i>
+          </div>
+          <div class="flex flex-col">
+            <span class="font-serif text-2xl font-bold tracking-tight text-choco-900 group-hover:text-goldp-600 transition-colors">
+              Dulce Arte
+            </span>
+            <span class="text-[10px] tracking-widest uppercase font-semibold text-rosep-500 -mt-1">
+              Alta Pastelería Artesanal
+            </span>
+          </div>
+        </a>
+
+        <!-- Navigation Links -->
+        <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-choco-800">
+          <a href="#catalogo" class="hover:text-rosep-500 transition-colors py-1">Menú Gourmet</a>
+          <a href="#cotizador" class="hover:text-rosep-500 transition-colors py-1 flex items-center gap-1">
+            <span>Cotizador</span>
+            <span class="px-1.5 py-0.5 text-[10px] font-bold bg-rosep-200 text-choco-900 rounded-full">Personalizado</span>
+          </a>
+          <a href="#rastreador" class="hover:text-rosep-500 transition-colors py-1 flex items-center gap-1">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-goldp-500"></i>
+            <span>Rastreador de Pedidos</span>
+          </a>
+          <a href="#historia" class="hover:text-rosep-500 transition-colors py-1">El Taller</a>
+        </nav>
+
+        <!-- Right Action Buttons -->
+        <div class="flex items-center gap-3">
+          <!-- Cart Drawer Button -->
+          <button onclick="toggleCartDrawer(true)" class="relative p-2.5 rounded-2xl bg-cream-100 hover:bg-rosep-100 text-choco-900 border border-cream-200 transition-all hover:scale-105" title="Ver carrito">
+            <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+            <span id="cartCountBadge" class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-choco-900 text-goldp-400 text-xs font-bold flex items-center justify-center border border-white">
+              0
+            </span>
+          </button>
+
+          <!-- User Account Trigger -->
+          <button onclick="openAuthModal()" class="flex items-center gap-2 pl-3 pr-4 py-2 rounded-2xl bg-gradient-to-r from-cream-100 to-rosep-100 hover:to-rosep-200 text-choco-950 font-medium text-sm border border-rosep-200 transition-all shadow-sm">
+            <div class="w-6 h-6 rounded-full bg-rosep-300 flex items-center justify-center text-choco-900 text-xs font-bold" id="userAvatarText">
+              <i data-lucide="user" class="w-3.5 h-3.5"></i>
+            </div>
+            <span id="navUserName">Mi Cuenta</span>
+          </button>
+
+          <!-- Mobile Hamburger -->
+          <button onclick="toggleMobileNav()" class="md:hidden p-2 rounded-xl text-choco-800 hover:bg-cream-200">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu Dropdown -->
+      <div id="mobileNavMenu" class="hidden md:hidden px-4 pt-2 pb-4 bg-cream-50 border-b border-cream-200 space-y-2">
+        <a href="#catalogo" onclick="toggleMobileNav()" class="block py-2 text-sm font-medium text-choco-900">Menú Gourmet</a>
+        <a href="#cotizador" onclick="toggleMobileNav()" class="block py-2 text-sm font-medium text-choco-900">Cotizador Personalizado</a>
+        <a href="#rastreador" onclick="toggleMobileNav()" class="block py-2 text-sm font-medium text-choco-900">Rastreador de Pedidos</a>
+        <a href="#historia" onclick="toggleMobileNav()" class="block py-2 text-sm font-medium text-choco-900">El Taller</a>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero" class="relative overflow-hidden pt-12 pb-20 md:py-24 bg-gradient-to-b from-cream-50 via-cream-100/60 to-cream-50">
+      <!-- Decorative background blur circles -->
+      <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-rosep-200/40 blur-3xl pointer-events-none"></div>
+      <div class="absolute top-1/2 -left-32 w-80 h-80 rounded-full bg-goldp-200/30 blur-3xl pointer-events-none"></div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          
+          <!-- Hero Copy -->
+          <div class="lg:col-span-7 space-y-6">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-rosep-100 border border-rosep-200 text-choco-900 text-xs font-semibold tracking-wide">
+              <span class="w-2 h-2 rounded-full bg-rosep-400 animate-pulse"></span>
+              Colección Primavera - Verano 2026
+            </div>
+
+            <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-choco-950">
+              El arte de la repostería fina, <br class="hidden sm:inline">
+              <span class="italic font-normal text-rosep-500">hecho emoción</span> en cada bocado.
+            </h1>
+
+            <p class="text-base sm:text-lg text-choco-800/80 max-w-xl font-light leading-relaxed">
+              Creaciones de autor con chocolate belga Callebaut 70%, mantequilla francesa Elle & Vire AOP y vainilla de Madagascar. Diseñadas para celebrar momentos que merecen ser inolvidables.
+            </p>
+
+            <div class="flex flex-wrap items-center gap-4 pt-2">
+              <a href="#catalogo" class="px-7 py-3.5 rounded-2xl bg-choco-900 text-cream-50 hover:bg-choco-800 transition-all font-medium text-sm shadow-luxury hover:scale-105 flex items-center gap-2">
+                <span>Explorar Menú Gourmet</span>
+                <i data-lucide="arrow-right" class="w-4 h-4 text-goldp-400"></i>
+              </a>
+
+              <a href="#cotizador" class="px-7 py-3.5 rounded-2xl bg-white text-choco-900 border border-cream-300 hover:border-goldp-400 transition-all font-medium text-sm shadow-sm hover:shadow-luxury flex items-center gap-2">
+                <i data-lucide="wand-2" class="w-4 h-4 text-goldp-500"></i>
+                <span>Cotizar Pastel de Autor</span>
+              </a>
+            </div>
+
+            <!-- Trust Pills -->
+            <div class="grid grid-cols-3 gap-4 pt-6 border-t border-cream-200/90 max-w-lg">
+              <div>
+                <p class="font-serif text-2xl font-bold text-choco-950">100%</p>
+                <p class="text-xs text-choco-700 font-medium">Materia Prima AOP</p>
+              </div>
+              <div>
+                <p class="font-serif text-2xl font-bold text-choco-950">48h</p>
+                <p class="text-xs text-choco-700 font-medium">Maduración Lenta</p>
+              </div>
+              <div>
+                <p class="font-serif text-2xl font-bold text-choco-950">14°C</p>
+                <p class="text-xs text-choco-700 font-medium">Cadena Fría Precisa</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero Image Showcase -->
+          <div class="lg:col-span-5 relative">
+            <div class="relative mx-auto max-w-md lg:max-w-none">
+              <!-- Frame Glow -->
+              <div class="absolute inset-0 bg-gradient-to-tr from-rosep-200 to-goldp-200 rounded-3xl transform rotate-3 scale-95 opacity-70 blur-md"></div>
+              
+              <!-- Card Container -->
+              <div class="relative bg-white p-3 rounded-3xl shadow-luxury-lg border border-cream-200 overflow-hidden">
+                <div class="relative h-80 sm:h-96 rounded-2xl overflow-hidden group">
+                  <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=1000&auto=format&fit=crop" 
+                       alt="Torta Nupcial Botánica Dulce Arte" 
+                       class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                  <div class="absolute inset-0 bg-gradient-to-t from-choco-950/80 via-transparent to-transparent"></div>
+                  
+                  <!-- Floating Badge -->
+                  <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-semibold text-choco-900 flex items-center gap-1.5 shadow-sm">
+                    <i data-lucide="award" class="w-3.5 h-3.5 text-goldp-500"></i>
+                    <span>Torta Nupcial de Autor</span>
+                  </div>
+
+                  <div class="absolute bottom-4 left-4 right-4 text-cream-50">
+                    <p class="text-xs font-semibold tracking-wider text-goldp-300 uppercase">Obra Destacada de la Semana</p>
+                    <h3 class="font-serif text-xl font-bold">Botánica Royale en 3 Pisos</h3>
+                    <p class="text-xs text-cream-200/80 mt-0.5">Vainilla Bourbon, ganache de frutos del bosque & pan de oro 24k</p>
+                  </div>
+                </div>
+
+                <!-- Floating Interactive Widget -->
+                <div class="mt-3 p-3 bg-cream-50 rounded-xl flex items-center justify-between border border-cream-200">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-full bg-rosep-200 flex items-center justify-center text-choco-900 font-bold text-xs">
+                      👩‍🍳
+                    </div>
+                    <div>
+                      <p class="text-xs font-bold text-choco-950">Chef Valentina Valenzuela</p>
+                      <p class="text-[11px] text-choco-700">Cupos limitados para este fin de semana</p>
+                    </div>
+                  </div>
+                  <a href="#cotizador" class="text-xs font-semibold text-goldp-600 hover:text-goldp-500 flex items-center gap-0.5">
+                    Reservar <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 🍰 CATÁLOGO DE PRODUCTOS GOURMET -->
+    <!-- ========================================== -->
+    <section id="catalogo" class="py-20 bg-cream-50 border-t border-cream-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Section Header -->
+        <div class="text-center max-w-2xl mx-auto mb-12">
+          <span class="text-xs uppercase tracking-widest font-bold text-rosep-500 bg-rosep-100 px-3 py-1 rounded-full">
+            Nuestra Colección
+          </span>
+          <h2 class="font-serif text-3xl sm:text-4xl font-bold text-choco-950 mt-3">
+            Creaciones de Vitrina & Atelier
+          </h2>
+          <p class="text-sm sm:text-base text-choco-800/80 mt-2">
+            Cada pieza es elaborada diariamente en nuestro taller con procesos artesanales y presentaciones de alta costura.
+          </p>
+
+          <!-- Category Filter Tabs -->
+          <div class="flex flex-wrap justify-center gap-2 mt-8" id="categoryFilterContainer">
+            <button onclick="filterCatalog('todos')" class="cat-pill active px-4 py-2 rounded-2xl text-xs font-semibold transition-all duration-200 bg-choco-900 text-cream-50 shadow-sm" data-cat="todos">
+              Todos
+            </button>
+            <button onclick="filterCatalog('tortas')" class="cat-pill px-4 py-2 rounded-2xl text-xs font-semibold transition-all duration-200 bg-white text-choco-800 border border-cream-300 hover:border-goldp-400" data-cat="tortas">
+              🎂 Tortas de Autor
+            </button>
+            <button onclick="filterCatalog('alfajores')" class="cat-pill px-4 py-2 rounded-2xl text-xs font-semibold transition-all duration-200 bg-white text-choco-800 border border-cream-300 hover:border-goldp-400" data-cat="alfajores">
+              ✨ Alfajores & Macarons
+            </button>
+            <button onclick="filterCatalog('tartas')" class="cat-pill px-4 py-2 rounded-2xl text-xs font-semibold transition-all duration-200 bg-white text-choco-800 border border-cream-300 hover:border-goldp-400" data-cat="tartas">
+              🥧 Tartaletas & Éclairs
+            </button>
+            <button onclick="filterCatalog('postres')" class="cat-pill px-4 py-2 rounded-2xl text-xs font-semibold transition-all duration-200 bg-white text-choco-800 border border-cream-300 hover:border-goldp-400" data-cat="postres">
+              🍓 Postres Boutique
+            </button>
+          </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          <!-- Dynamically populated via renderCatalog() -->
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 🎨 COTIZADOR PERSONALIZADO (CUSTOM CAKE BUILDER) -->
+    <!-- ========================================== -->
+    <section id="cotizador" class="py-20 bg-cream-100/70 border-t border-cream-200 relative overflow-hidden">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        
+        <div class="text-center max-w-2xl mx-auto mb-12">
+          <span class="text-xs uppercase tracking-widest font-bold text-goldp-600 bg-goldp-200/50 px-3 py-1 rounded-full border border-goldp-400/40">
+            Atelier a Medida
+          </span>
+          <h2 class="font-serif text-3xl sm:text-4xl font-bold text-choco-950 mt-3">
+            Cotizador de Tortas & Diseños Exclusivos
+          </h2>
+          <p class="text-sm sm:text-base text-choco-800/80 mt-2">
+            Configura cada nivel de sabor, cobertura y dimensiones de tu pastel soñado. Recibe una estimación inmediata y asegura tu cupo en la cocina.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          <!-- Builder Form Column (Left 8 cols) -->
+          <div class="lg:col-span-8 bg-white p-6 sm:p-8 rounded-3xl shadow-luxury border border-cream-200 space-y-8">
+            
+            <!-- Step 1: Tipo de Pastel -->
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-choco-900 mb-3 flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-rosep-200 text-choco-950 flex items-center justify-center text-xs">1</span>
+                Tipo de Creación Gourmet
+              </label>
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="cakeTypeOptions">
+                <button type="button" onclick="selectCakeOption('type', 'Torta Nupcial Botánica', 55000)" class="opt-btn active p-3 rounded-2xl border-2 text-left transition-all border-goldp-500 bg-rosep-50/60" data-group="type" data-val="Torta Nupcial Botánica">
+                  <span class="text-lg">🌿</span>
+                  <p class="font-semibold text-xs text-choco-950 mt-1">Torta Nupcial Botánica</p>
+                  <p class="text-[10px] text-choco-700">Flores comestibles & pan de oro</p>
+                </button>
+                <button type="button" onclick="selectCakeOption('type', 'Torta Celebration Velvet', 42000)" class="opt-btn p-3 rounded-2xl border-2 text-left transition-all border-cream-200 hover:border-rosep-300" data-group="type" data-val="Torta Celebration Velvet">
+                  <span class="text-lg">🎂</span>
+                  <p class="font-semibold text-xs text-choco-950 mt-1">Celebration Velvet</p>
+                  <p class="text-[10px] text-choco-700">Textura terciopelo & macarons</p>
+                </button>
+                <button type="button" onclick="selectCakeOption('type', 'Torre Macarons Royale', 48000)" class="opt-btn p-3 rounded-2xl border-2 text-left transition-all border-cream-200 hover:border-rosep-300" data-group="type" data-val="Torre Macarons Royale">
+                  <span class="text-lg">✨</span>
+                  <p class="font-semibold text-xs text-choco-950 mt-1">Torre Macarons Royale</p>
+                  <p class="text-[10px] text-choco-700">Pirámide en degradé de colores</p>
+                </button>
+                <button type="button" onclick="selectCakeOption('type', 'Tarta Entremet Brillo Espejo', 39000)" class="opt-btn p-3 rounded-2xl border-2 text-left transition-all border-cream-200 hover:border-rosep-300" data-group="type" data-val="Tarta Entremet Brillo Espejo">
+                  <span class="text-lg">🪞</span>
+                  <p class="font-semibold text-xs text-choco-950 mt-1">Entremet Brillo Espejo</p>
+                  <p class="text-[10px] text-choco-700">Mousse francés y glaseado</p>
+                </button>
+                <button type="button" onclick="selectCakeOption('type', 'Torta Naked Rústica Chic', 36000)" class="opt-btn p-3 rounded-2xl border-2 text-left transition-all border-cream-200 hover:border-rosep-300" data-group="type" data-val="Torta Naked Rústica Chic">
+                  <span class="text-lg">🍓</span>
+                  <p class="font-semibold text-xs text-choco-950 mt-1">Naked Rústica Chic</p>
+                  <p class="text-[10px] text-choco-700">Frutos frescos de temporada</p>
+                </button>
+                <button type="button" onclick="selectCakeOption('type', 'Mini Desserts Box Luxury', 32000)" class="opt-btn p-3 rounded-2xl border-2 text-left transition-all border-cream-200 hover:border-rosep-300" data-group="type" data-val="Mini Desserts Box Luxury">
+                  <span class="text-lg">🎁</span>
+                  <p class="font-semibold text-xs text-choco-950 mt-1">Box Petit Fours (24 uds)</p>
+                  <p class="text-[10px] text-choco-700">Selección cocktail fina</p>
+                </button>
+              </div>
+            </div>
+
+            <!-- Step 2: Sabores de Bizcocho & Rellenos -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-choco-900 mb-2 flex items-center gap-2">
+                  <span class="w-5 h-5 rounded-full bg-rosep-200 text-choco-950 flex items-center justify-center text-xs">2</span>
+                  Sabor de Bizcocho
+                </label>
+                <select id="customFlavor" onchange="calculateCustomQuote()" class="w-full px-4 py-2.5 rounded-2xl border border-cream-300 bg-cream-50/50 text-choco-900 text-xs font-medium focus:ring-2 focus:ring-goldp-400 focus:outline-none">
+                  <option value="Vainilla Bourbon de Madagascar (+$0)">Vainilla Bourbon de Madagascar</option>
+                  <option value="Cacao Belga Callebaut 70% (+$4.000)">Cacao Belga Callebaut 70% (+$4.000)</option>
+                  <option value="Pistacho Puro Bronte DOP Sicilia (+$8.000)">Pistacho Puro Bronte DOP Sicilia (+$8.000)</option>
+                  <option value="Red Velvet Orgánico con Remolacha (+$3.500)">Red Velvet Orgánico con Remolacha (+$3.500)</option>
+                  <option value="Zanahoria Especiada & Nueces Tostadas (+$3.000)">Zanahoria Especiada & Nueces Tostadas (+$3.000)</option>
+                  <option value="Almendra Gioconda Amaretto (+$5.000)">Almendra Gioconda Amaretto (+$5.000)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-choco-900 mb-2 flex items-center gap-2">
+                  <span class="w-5 h-5 rounded-full bg-rosep-200 text-choco-950 flex items-center justify-center text-xs">3</span>
+                  Relleno de Autor
+                </label>
+                <select id="customFilling" onchange="calculateCustomQuote()" class="w-full px-4 py-2.5 rounded-2xl border border-cream-300 bg-cream-50/50 text-choco-900 text-xs font-medium focus:ring-2 focus:ring-goldp-400 focus:outline-none">
+                  <option value="Ganache Frutos del Bosque & Maracuyá (+$0)">Ganache Frutos del Bosque & Maracuyá</option>
+                  <option value="Caramelo Salado con Fleur de Sel (+$2.500)">Caramelo Salado con Fleur de Sel (+$2.500)</option>
+                  <option value="Crema Diplomata Ligera a la Vainilla (+$0)">Crema Diplomata Ligera a la Vainilla</option>
+                  <option value="Trufa Praliné Avellanas Piamonte (+$6.000)">Trufa Praliné Avellanas Piamonte (+$6.000)</option>
+                  <option value="Mousse Chocolate Blanco & Frambuesas (+$4.500)">Mousse Chocolate Blanco & Frambuesas (+$4.500)</option>
+                  <option value="Manjar Artesanal de Campo en Olla de Cobre (+$2.000)">Manjar de Campo en Olla de Cobre (+$2.000)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Step 3: Tamaño y Porciones -->
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-choco-900 mb-2 flex items-center justify-between">
+                <span class="flex items-center gap-2">
+                  <span class="w-5 h-5 rounded-full bg-rosep-200 text-choco-950 flex items-center justify-center text-xs">4</span>
+                  Tamaño & Número de Porciones
+                </span>
+                <span id="portionsDisplayBadge" class="text-xs font-bold text-goldp-600 bg-goldp-200/50 px-2.5 py-0.5 rounded-full">
+                  20 porciones (Estándar)
+                </span>
+              </label>
+
+              <div class="grid grid-cols-4 gap-3" id="portionButtons">
+                <button type="button" onclick="selectPortions(12, 1.0)" class="portion-btn p-2.5 rounded-2xl border-2 text-center transition-all border-cream-200 text-choco-900" data-portions="12">
+                  <p class="font-bold text-sm">12</p>
+                  <p class="text-[10px] text-choco-700">Íntimo</p>
+                </button>
+                <button type="button" onclick="selectPortions(20, 1.4)" class="portion-btn active p-2.5 rounded-2xl border-2 text-center transition-all border-goldp-500 bg-rosep-50/60 text-choco-950" data-portions="20">
+                  <p class="font-bold text-sm">20</p>
+                  <p class="text-[10px] text-choco-700">Familiar</p>
+                </button>
+                <button type="button" onclick="selectPortions(40, 2.2)" class="portion-btn p-2.5 rounded-2xl border-2 text-center transition-all border-cream-200 text-choco-900" data-portions="40">
+                  <p class="font-bold text-sm">40</p>
+                  <p class="text-[10px] text-choco-700">Fiesta</p>
+                </button>
+                <button type="button" onclick="selectPortions(80, 3.8)" class="portion-btn p-2.5 rounded-2xl border-2 text-center transition-all border-cream-200 text-choco-900" data-portions="80">
+                  <p class="font-bold text-sm">80+</p>
+                  <p class="text-[10px] text-choco-700">Gala/Boda</p>
+                </button>
+              </div>
+            </div>
+
+            <!-- Step 4: Cobertura & Acabado -->
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-choco-900 mb-2 flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-rosep-200 text-choco-950 flex items-center justify-center text-xs">5</span>
+                Cobertura & Detalles Estéticos
+              </label>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="finishOptions">
+                <button type="button" onclick="selectCakeOption('finish', 'Buttercream Suizo Seda', 0)" class="opt-btn-finish active p-2.5 rounded-2xl border-2 text-left transition-all border-goldp-500 bg-rosep-50/60" data-group="finish" data-val="Buttercream Suizo Seda">
+                  <p class="font-bold text-xs text-choco-950">Buttercream Suizo</p>
+                  <p class="text-[10px] text-choco-700">Textura de seda natural</p>
+                </button>
+                <button type="button" onclick="selectCakeOption('finish', 'Semi-Naked Botánico', 4500)" class="opt-btn-finish p-2.5 rounded-2xl border-2 text-left transition-all border-cream-200" data-group="finish" data-val="Semi-Naked Botánico">
+                  <p class="font-bold text-xs text-choco-950">Semi-Naked Botánico</p>
+                  <p class="text-[10px] text-choco-700">Con flores orgánicas</p>
+                </button>
+                <button type="button" onclick="selectCakeOption('finish', 'Pan de Oro 24K & Perlas', 9500)" class="opt-btn-finish p-2.5 rounded-2xl border-2 text-left transition-all border-cream-200" data-group="finish" data-val="Pan de Oro 24K & Perlas">
+                  <p class="font-bold text-xs text-choco-950">Oro 24K & Perlas</p>
+                  <p class="text-[10px] text-choco-700">Láminas de oro fino</p>
+                </button>
+                <button type="button" onclick="selectCakeOption('finish', 'Glaseado Espejo Marmolado', 7000)" class="opt-btn-finish p-2.5 rounded-2xl border-2 text-left transition-all border-cream-200" data-group="finish" data-val="Glaseado Espejo Marmolado">
+                  <p class="font-bold text-xs text-choco-950">Espejo Marmolado</p>
+                  <p class="text-[10px] text-choco-700">Alto brillo contemporáneo</p>
+                </button>
+              </div>
+            </div>
+
+            <!-- Step 5: Subida de Referencias & Notas -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-choco-900 mb-2 flex items-center gap-2">
+                  <span class="w-5 h-5 rounded-full bg-rosep-200 text-choco-950 flex items-center justify-center text-xs">6</span>
+                  Referencia Visual o Paleta
+                </label>
+                <div class="border-2 border-dashed border-cream-300 hover:border-goldp-400 rounded-2xl p-4 text-center cursor-pointer transition-colors relative bg-cream-50/50" onclick="document.getElementById('cakeRefInput').click()">
+                  <input type="file" id="cakeRefInput" accept="image/*" class="hidden" onchange="handleReferenceUpload(event)">
+                  <div id="uploadPlaceholder">
+                    <i data-lucide="image" class="w-6 h-6 mx-auto text-rosep-400 mb-1"></i>
+                    <p class="text-xs font-semibold text-choco-900">Subir imagen o boceto</p>
+                    <p class="text-[10px] text-choco-700">PNG, JPG hasta 10MB</p>
+                  </div>
+                  <div id="uploadPreviewContainer" class="hidden flex items-center justify-center gap-2">
+                    <img id="uploadPreviewImg" src="" alt="Vista previa" class="w-12 h-12 object-cover rounded-xl border border-cream-200 shadow-sm">
+                    <div class="text-left">
+                      <p class="text-xs font-bold text-choco-950 truncate max-w-[120px]" id="uploadFilename">foto.jpg</p>
+                      <button type="button" onclick="clearUploadPreview(event)" class="text-[10px] text-red-600 hover:underline">Eliminar</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-choco-900 mb-2">
+                  Dedicatoria & Alergias
+                </label>
+                <textarea id="customNotes" rows="3" placeholder="Ej: Dedicatoria en caligrafía dorada: 'Feliz Aniversario'. Nota: Sin nueces por alergia familiar..." class="w-full px-4 py-2.5 rounded-2xl border border-cream-300 bg-cream-50/50 text-choco-900 text-xs focus:ring-2 focus:ring-goldp-400 focus:outline-none"></textarea>
+              </div>
+            </div>
+
+            <!-- Step 6: Fecha y Hora de Despacho -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2 border-t border-cream-200">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-choco-900 mb-2 flex items-center gap-2">
+                  <span class="w-5 h-5 rounded-full bg-rosep-200 text-choco-950 flex items-center justify-center text-xs">7</span>
+                  Fecha de Despacho / Entrega
+                </label>
+                <input type="date" id="customDeliveryDate" class="w-full px-4 py-2.5 rounded-2xl border border-cream-300 bg-cream-50/50 text-choco-900 text-xs font-medium focus:ring-2 focus:ring-goldp-400 focus:outline-none">
+                <p class="text-[10px] text-choco-700 mt-1 flex items-center gap-1">
+                  <i data-lucide="clock" class="w-3 h-3 text-goldp-500"></i> Se requieren 48h mínimas de anticipación artesanal
+                </p>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-choco-900 mb-2">
+                  Franja Horaria Preferida
+                </label>
+                <select id="customTimeSlot" class="w-full px-4 py-2.5 rounded-2xl border border-cream-300 bg-cream-50/50 text-choco-900 text-xs font-medium focus:ring-2 focus:ring-goldp-400 focus:outline-none">
+                  <option value="Mañana (10:00 - 13:00)">Mañana (10:00 - 13:00) · Climatizado</option>
+                  <option value="Tarde (14:00 - 18:00)">Tarde (14:00 - 18:00) · Climatizado</option>
+                  <option value="Especial Evento (19:00 - 20:30)">Especial Evento (19:00 - 20:30)</option>
+                  <option value="Retiro en Taller Vitacura">Retiro en Taller Vitacura (Sin costo)</option>
+                </select>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Live Price Summary Column (Right 4 cols) -->
+          <div class="lg:col-span-4 sticky top-28 space-y-4">
+            
+            <div class="bg-white p-6 rounded-3xl shadow-luxury border border-goldp-300/40 relative overflow-hidden">
+              <div class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-goldp-200/40 blur-2xl pointer-events-none"></div>
+
+              <div class="flex items-center justify-between pb-4 border-b border-cream-200">
+                <h3 class="font-serif text-lg font-bold text-choco-950">Resumen de Cotización</h3>
+                <span class="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">En tiempo real</span>
+              </div>
+
+              <!-- Breakdown list -->
+              <div class="py-4 space-y-2.5 text-xs text-choco-800 border-b border-cream-200">
+                <div class="flex justify-between">
+                  <span class="text-choco-700">Creación:</span>
+                  <span class="font-semibold text-choco-950" id="summaryCakeType">Torta Nupcial Botánica</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-choco-700">Porciones:</span>
+                  <span class="font-semibold text-choco-950" id="summaryPortions">20 porciones (x1.4)</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-choco-700">Bizcocho:</span>
+                  <span class="font-semibold text-choco-950" id="summaryFlavor">Vainilla Bourbon</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-choco-700">Relleno:</span>
+                  <span class="font-semibold text-choco-950" id="summaryFilling">Ganache Frutos del Bosque</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-choco-700">Acabado:</span>
+                  <span class="font-semibold text-choco-950" id="summaryFinish">Buttercream Suizo</span>
+                </div>
+                <div class="flex justify-between pt-1">
+                  <span class="text-choco-700">Despacho Climatizado:</span>
+                  <span class="font-semibold text-emerald-800">Incluido en Santiago</span>
+                </div>
+              </div>
+
+              <!-- Total price -->
+              <div class="py-4">
+                <p class="text-[11px] uppercase tracking-wider text-choco-700 font-semibold">Inversión Estimada</p>
+                <div class="flex items-baseline gap-2 mt-1">
+                  <span class="font-serif text-3xl font-bold text-choco-950" id="summaryTotalPrice">$77.000</span>
+                  <span class="text-xs text-choco-700">CLP (IVA incl.)</span>
+                </div>
+                <p class="text-[10px] text-choco-700 mt-1">Incluye caja de lujo acolchada y preservador de temperatura.</p>
+              </div>
+
+              <!-- Action buttons -->
+              <div class="space-y-2 pt-2">
+                <button type="button" onclick="submitCustomQuoteOrder()" class="w-full py-3.5 px-4 rounded-2xl bg-choco-900 hover:bg-choco-800 text-goldp-300 font-semibold text-xs tracking-wider uppercase transition-all shadow-md hover:scale-[1.02] flex items-center justify-center gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-goldp-400"></i>
+                  <span>Confirmar & Enviar a Cocina</span>
+                </button>
+                <button type="button" onclick="saveQuoteDraft()" class="w-full py-2.5 px-4 rounded-2xl bg-cream-100 hover:bg-cream-200 text-choco-900 text-xs font-medium transition-colors">
+                  Guardar Borrador en Mi Cuenta
+                </button>
+              </div>
+
+            </div>
+
+            <!-- Guarantee Box -->
+            <div class="bg-rosep-50 p-4 rounded-2xl border border-rosep-200 text-xs text-choco-800 flex items-start gap-3">
+              <i data-lucide="shield-check" class="w-5 h-5 text-rosep-500 shrink-0 mt-0.5"></i>
+              <div>
+                <p class="font-bold text-choco-950">Garantía de Autor Dulce Arte</p>
+                <p class="text-[11px] text-choco-700 mt-0.5">Si la receta o decoración no cumple al 100% con tu referencia acordada, nuestro taller asume la reposición inmediata.</p>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 📍 ESTADO DEL PEDIDO (RASTREADOR EN VIVO) -->
+    <!-- ========================================== -->
+    <section id="rastreador" class="py-20 bg-cream-50 border-t border-cream-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center max-w-2xl mx-auto mb-12">
+          <span class="text-xs uppercase tracking-widest font-bold text-rosep-500 bg-rosep-100 px-3 py-1 rounded-full">
+            Seguimiento en Vivo
+          </span>
+          <h2 class="font-serif text-3xl sm:text-4xl font-bold text-choco-950 mt-3">
+            Rastreador de Cocina & Despacho
+          </h2>
+          <p class="text-sm sm:text-base text-choco-800/80 mt-2">
+            Ingresa el código único de tu pedido para ver en tiempo real en qué etapa de nuestro taller se encuentra tu creación.
+          </p>
+
+          <!-- Tracker Search Bar -->
+          <div class="mt-8 flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <div class="relative flex-1">
+              <i data-lucide="search" class="w-4 h-4 absolute left-4 top-3.5 text-choco-700"></i>
+              <input type="text" id="trackerInput" placeholder="Ej: DA-2024-8842 o 8842" class="w-full pl-10 pr-4 py-3 rounded-2xl border border-cream-300 bg-white text-choco-900 text-xs font-semibold focus:ring-2 focus:ring-goldp-400 focus:outline-none uppercase tracking-wider">
+            </div>
+            <button onclick="searchOrderTracking()" class="px-6 py-3 rounded-2xl bg-choco-900 text-cream-50 hover:bg-choco-800 font-semibold text-xs transition-all shadow-sm flex items-center justify-center gap-2">
+              <i data-lucide="compass" class="w-4 h-4 text-goldp-400"></i>
+              <span>Consultar</span>
+            </button>
+          </div>
+
+          <!-- Quick Test Demo Pills -->
+          <div class="flex flex-wrap items-center justify-center gap-2 mt-4 text-[11px] text-choco-700">
+            <span>Probar con pedidos del taller:</span>
+            <button onclick="testTrackCode('DA-2024-8842')" class="px-2.5 py-1 rounded-full bg-cream-100 hover:bg-rosep-100 border border-cream-200 text-choco-900 font-medium">#DA-8842 (Recibido)</button>
+            <button onclick="testTrackCode('DA-2024-5519')" class="px-2.5 py-1 rounded-full bg-cream-100 hover:bg-rosep-100 border border-cream-200 text-choco-900 font-medium">#DA-5519 (En Prep)</button>
+            <button onclick="testTrackCode('DA-2024-6320')" class="px-2.5 py-1 rounded-full bg-cream-100 hover:bg-rosep-100 border border-cream-200 text-choco-900 font-medium">#DA-6320 (Horneado)</button>
+            <button onclick="testTrackCode('DA-2024-9104')" class="px-2.5 py-1 rounded-full bg-cream-100 hover:bg-rosep-100 border border-cream-200 text-choco-900 font-medium">#DA-9104 (Calidad)</button>
+            <button onclick="testTrackCode('DA-2024-4281')" class="px-2.5 py-1 rounded-full bg-cream-100 hover:bg-rosep-100 border border-cream-200 text-choco-900 font-medium">#DA-4281 (Listo)</button>
+          </div>
+        </div>
+
+        <!-- Order Live Card (Populated by JS) -->
+        <div id="trackerResultContainer" class="max-w-4xl mx-auto">
+          <!-- Injected dynamically -->
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Footer Cliente -->
+    <footer id="historia" class="bg-choco-950 text-cream-200/90 pt-16 pb-12 border-t border-goldp-600/30">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 pb-12 border-b border-choco-800">
+          
+          <!-- Col 1: Brand -->
+          <div class="space-y-4">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-xl bg-goldp-500 flex items-center justify-center text-choco-950 font-bold">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+              </div>
+              <span class="font-serif text-xl font-bold text-white tracking-wide">Dulce Arte</span>
+            </div>
+            <p class="text-xs text-cream-300/80 leading-relaxed">
+              Atelier y pastelería fina contemporánea. Fusionamos la rigurosidad de la técnica francesa con ingredientes botánicos locales de excelencia.
+            </p>
+            <div class="flex items-center gap-3 text-goldp-400">
+              <a href="#" class="w-8 h-8 rounded-full bg-choco-900 flex items-center justify-center hover:bg-goldp-500 hover:text-choco-950 transition-colors"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+              <a href="#" class="w-8 h-8 rounded-full bg-choco-900 flex items-center justify-center hover:bg-goldp-500 hover:text-choco-950 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></a>
+              <a href="#" class="w-8 h-8 rounded-full bg-choco-900 flex items-center justify-center hover:bg-goldp-500 hover:text-choco-950 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></a>
+            </div>
+          </div>
+
+          <!-- Col 2: Enlaces Rápidos -->
+          <div>
+            <h4 class="text-xs uppercase tracking-widest font-bold text-goldp-300 mb-4">Experiencia Dulce Arte</h4>
+            <ul class="space-y-2.5 text-xs">
+              <li><a href="#catalogo" class="hover:text-goldp-400 transition-colors">Colección de Temporada</a></li>
+              <li><a href="#cotizador" class="hover:text-goldp-400 transition-colors">Pasteles de Boda & Eventos</a></li>
+              <li><a href="#rastreador" class="hover:text-goldp-400 transition-colors">Seguimiento de Despacho</a></li>
+              <li><a href="javascript:void(0)" onclick="openAuthModal('admin')" class="text-rosep-300 hover:text-white transition-colors">Acceso Cocina / Admin</a></li>
+            </ul>
+          </div>
+
+          <!-- Col 3: Atelier y Horarios -->
+          <div>
+            <h4 class="text-xs uppercase tracking-widest font-bold text-goldp-300 mb-4">Taller & Retiros</h4>
+            <p class="text-xs text-cream-300/80 leading-relaxed">
+              Av. Alonso de Córdova 3890, Vitacura.<br>
+              Santiago de Chile.<br><br>
+              <strong class="text-white">Horario Atelier:</strong><br>
+              Martes a Sábado: 09:30 - 19:30<br>
+              Domingo: 10:00 - 15:00
+            </p>
+          </div>
+
+          <!-- Col 4: Newsletter Gourmet -->
+          <div>
+            <h4 class="text-xs uppercase tracking-widest font-bold text-goldp-300 mb-4">Mundo de Alta Pastelería</h4>
+            <p class="text-xs text-cream-300/80 mb-3">Recibe invitaciones a nuestras catas de temporada y recetas maestras.</p>
+            <div class="flex gap-2">
+              <input type="email" placeholder="tu@correo.com" class="px-3 py-2 rounded-xl bg-choco-900 border border-choco-800 text-xs text-white focus:outline-none focus:border-goldp-400 w-full">
+              <button class="px-3 py-2 rounded-xl bg-goldp-500 text-choco-950 text-xs font-bold hover:bg-goldp-400 transition-colors">Unirme</button>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-[11px] text-cream-300/60 gap-4">
+          <p>© 2026 Dulce Arte Haute Pâtisserie SpA. Todos los derechos reservados.</p>
+          <div class="flex gap-6">
+            <a href="#" class="hover:text-cream-100">Políticas de Higiene y Calidad</a>
+            <a href="#" class="hover:text-cream-100">Términos de Despacho Climatizado</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- ⚙️ 2. VISTA DE ADMINISTRACIÓN & OPERACIONES -->
+  <!-- ========================================== -->
+  <div id="adminViewContainer" class="hidden min-h-screen bg-cream-50 flex">
+    
+    <!-- Admin Sidebar -->
+    <aside id="adminSidebar" class="w-64 bg-choco-950 text-cream-100 flex flex-col border-r border-choco-900 shrink-0 transition-all duration-300 z-30">
+      
+      <!-- Brand Header -->
+      <div class="p-6 border-b border-choco-900 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-goldp-500 text-choco-950 flex items-center justify-center font-bold">
+            <i data-lucide="chef-hat" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h2 class="font-serif text-lg font-bold text-white tracking-wide">Dulce Arte</h2>
+            <p class="text-[10px] uppercase tracking-wider text-goldp-300 font-semibold">Taller de Cocina</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chef Profile Badge -->
+      <div class="p-4 mx-4 my-3 rounded-2xl bg-choco-900/80 border border-choco-800 flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-rosep-300 text-choco-950 flex items-center justify-center font-bold text-xs">
+          VV
+        </div>
+        <div class="overflow-hidden">
+          <p class="text-xs font-bold text-white truncate">Chef Valentina V.</p>
+          <span class="inline-block text-[9px] font-semibold text-goldp-300 uppercase tracking-wider">Jefa de Taller</span>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex-1 px-4 py-2 space-y-1 text-xs font-medium">
+        <button onclick="switchAdminTab('dashboard')" id="tabBtn-dashboard" class="admin-tab-btn active w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl text-choco-950 bg-goldp-500 font-semibold transition-all">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span>Dashboard General</span>
+        </button>
+
+        <button onclick="switchAdminTab('kanban')" id="tabBtn-kanban" class="admin-tab-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl text-cream-200/80 hover:bg-choco-900 hover:text-white transition-all">
+          <i data-lucide="trello" class="w-4 h-4"></i>
+          <span class="flex-1 text-left">Tablero Kanban Cocina</span>
+          <span id="kanbanCountPill" class="px-2 py-0.5 rounded-full text-[10px] bg-rosep-300 text-choco-950 font-bold">5</span>
+        </button>
+
+        <button onclick="switchAdminTab('inventario')" id="tabBtn-inventario" class="admin-tab-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl text-cream-200/80 hover:bg-choco-900 hover:text-white transition-all">
+          <i data-lucide="boxes" class="w-4 h-4"></i>
+          <span class="flex-1 text-left">Inventario & BOM</span>
+          <span id="inventoryAlertPill" class="px-2 py-0.5 rounded-full text-[10px] bg-red-400 text-white font-bold">3</span>
+        </button>
+
+        <button onclick="switchAdminTab('despachos')" id="tabBtn-despachos" class="admin-tab-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl text-cream-200/80 hover:bg-choco-900 hover:text-white transition-all">
+          <i data-lucide="truck" class="w-4 h-4"></i>
+          <span class="flex-1 text-left">Gestión de Despachos</span>
+          <span id="despachoCountPill" class="px-2 py-0.5 rounded-full text-[10px] bg-cream-100 text-choco-950 font-bold">3</span>
+        </button>
+
+        <button onclick="switchAdminTab('ajustes')" id="tabBtn-ajustes" class="admin-tab-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl text-cream-200/80 hover:bg-choco-900 hover:text-white transition-all">
+          <i data-lucide="settings" class="w-4 h-4"></i>
+          <span>Ajustes del Taller</span>
+        </button>
+      </nav>
+
+      <!-- Bottom Quick Actions -->
+      <div class="p-4 border-t border-choco-900 space-y-2">
+        <button onclick="openNewOrderModal()" class="w-full py-2.5 px-3 rounded-2xl bg-rosep-200 hover:bg-rosep-300 text-choco-950 font-bold text-xs transition-colors flex items-center justify-center gap-2">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i>
+          <span>Nuevo Pedido Manual</span>
+        </button>
+        <button onclick="switchMainView('client')" class="w-full py-2 px-3 rounded-2xl bg-choco-900 hover:bg-choco-800 text-cream-200 text-xs transition-colors flex items-center justify-center gap-2">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+          <span>Ir a Portal Cliente</span>
+        </button>
+      </div>
+
+    </aside>
+
+    <!-- Admin Content Area -->
+    <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+      
+      <!-- Top Admin Header -->
+      <header class="h-16 bg-white border-b border-cream-200 px-6 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-4">
+          <h1 id="adminHeaderTitle" class="font-serif text-xl font-bold text-choco-950">
+            Tablero General de Operaciones
+          </h1>
+          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            Taller Operativo en Vivo
+          </span>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="text-right hidden sm:block">
+            <p class="text-xs font-bold text-choco-950" id="currentDateDisplay">Miércoles, 11 Noviembre</p>
+            <p class="text-[10px] text-choco-700">Turno Mañana: 07:00 - 16:30</p>
+          </div>
+          <button onclick="openAuthModal('admin')" class="p-2 rounded-xl bg-cream-100 text-choco-800 hover:bg-cream-200" title="Sesión de Chef">
+            <i data-lucide="user-check" class="w-4 h-4 text-emerald-700"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- TAB 1: DASHBOARD GENERAL -->
+      <section id="adminTab-dashboard" class="p-6 sm:p-8 space-y-8">
+        
+        <!-- Metrics / KPIs Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <!-- Metric 1 -->
+          <div class="bg-white p-5 rounded-3xl shadow-sm border border-cream-200">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-choco-700">Pedidos en Cocina</span>
+              <div class="w-9 h-9 rounded-2xl bg-rosep-100 text-rosep-500 flex items-center justify-center">
+                <i data-lucide="cake" class="w-5 h-5"></i>
+              </div>
+            </div>
+            <div class="mt-3 flex items-baseline gap-2">
+              <span class="font-serif text-3xl font-bold text-choco-950" id="kpiActiveOrders">5</span>
+              <span class="text-xs text-emerald-600 font-semibold">+2 vs ayer</span>
+            </div>
+            <p class="text-[11px] text-choco-700 mt-1">2 con entrega en menos de 3h</p>
+          </div>
+
+          <!-- Metric 2 -->
+          <div class="bg-white p-5 rounded-3xl shadow-sm border border-cream-200">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-choco-700">Ventas Hoy</span>
+              <div class="w-9 h-9 rounded-2xl bg-goldp-200/50 text-goldp-600 flex items-center justify-center">
+                <i data-lucide="dollar-sign" class="w-5 h-5"></i>
+              </div>
+            </div>
+            <div class="mt-3 flex items-baseline gap-2">
+              <span class="font-serif text-3xl font-bold text-choco-950" id="kpiDailySales">$422.500</span>
+              <span class="text-xs text-emerald-600 font-semibold">+18.4%</span>
+            </div>
+            <p class="text-[11px] text-choco-700 mt-1">Ticket promedio: $84.500 CLP</p>
+          </div>
+
+          <!-- Metric 3 -->
+          <div class="bg-white p-5 rounded-3xl shadow-sm border border-cream-200">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-choco-700">Insumos Críticos BOM</span>
+              <div class="w-9 h-9 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center">
+                <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+              </div>
+            </div>
+            <div class="mt-3 flex items-baseline gap-2">
+              <span class="font-serif text-3xl font-bold text-red-600" id="kpiCriticalStock">3</span>
+              <span class="text-xs text-red-600 font-semibold">Requieren reposición</span>
+            </div>
+            <p class="text-[11px] text-choco-700 mt-1">Vainas Vainilla Madagascar, Pistacho Bronte</p>
+          </div>
+
+          <!-- Metric 4 -->
+          <div class="bg-white p-5 rounded-3xl shadow-sm border border-cream-200">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-choco-700">Despachos Climatizados</span>
+              <div class="w-9 h-9 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                <i data-lucide="thermometer-snowflake" class="w-5 h-5"></i>
+              </div>
+            </div>
+            <div class="mt-3 flex items-baseline gap-2">
+              <span class="font-serif text-3xl font-bold text-choco-950">14.0°C</span>
+              <span class="text-xs text-emerald-600 font-semibold">Estable</span>
+            </div>
+            <p class="text-[11px] text-choco-700 mt-1">Flota climatizada 100% óptima</p>
+          </div>
+        </div>
+
+        <!-- Quick Activity & Overview -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          <!-- Recent Orders Table -->
+          <div class="lg:col-span-8 bg-white p-6 rounded-3xl shadow-sm border border-cream-200">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-serif text-lg font-bold text-choco-950">Cola Reciente del Taller</h3>
+              <button onclick="switchAdminTab('kanban')" class="text-xs font-semibold text-goldp-600 hover:text-goldp-500 flex items-center gap-1">
+                Ver Kanban Completo <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead>
+                  <tr class="border-b border-cream-200 text-choco-700">
+                    <th class="pb-3 font-semibold">Código</th>
+                    <th class="pb-3 font-semibold">Cliente</th>
+                    <th class="pb-3 font-semibold">Creación</th>
+                    <th class="pb-3 font-semibold">Entrega</th>
+                    <th class="pb-3 font-semibold">Monto</th>
+                    <th class="pb-3 font-semibold">Etapa Actual</th>
+                  </tr>
+                </thead>
+                <tbody id="adminDashboardOrdersTable" class="divide-y divide-cream-100">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Activity Log & Kitchen Alerts -->
+          <div class="lg:col-span-4 bg-white p-6 rounded-3xl shadow-sm border border-cream-200 space-y-4">
+            <h3 class="font-serif text-lg font-bold text-choco-950">Bitácora del Chef</h3>
+            <div class="space-y-3.5 text-xs">
+              <div class="flex gap-3 items-start pb-3 border-b border-cream-100">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 mt-1.5 shrink-0"></span>
+                <div>
+                  <p class="font-bold text-choco-950">Control de Calidad Superado</p>
+                  <p class="text-choco-700">Torta Ópera Imperial (#DA-9104) aprobada organolépticamente.</p>
+                  <span class="text-[10px] text-choco-700">Hace 14 min</span>
+                </div>
+              </div>
+              <div class="flex gap-3 items-start pb-3 border-b border-cream-100">
+                <span class="w-2 h-2 rounded-full bg-amber-500 mt-1.5 shrink-0"></span>
+                <div>
+                  <p class="font-bold text-choco-950">Horneado de Merengue Suizo</p>
+                  <p class="text-choco-700">Pavlova Real (#DA-4281) desmoldada a 95°C.</p>
+                  <span class="text-[10px] text-choco-700">Hace 45 min</span>
+                </div>
+              </div>
+              <div class="flex gap-3 items-start">
+                <span class="w-2 h-2 rounded-full bg-red-500 mt-1.5 shrink-0"></span>
+                <div>
+                  <p class="font-bold text-red-600">Alerta de Stock Mínimo</p>
+                  <p class="text-choco-700">Vainas de Vainilla Bourbon Madagascar por debajo del umbral crítico.</p>
+                  <span class="text-[10px] text-choco-700">Hace 1 hora</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- TAB 2: TABLERO KANBAN DE COCINA -->
+      <section id="adminTab-kanban" class="hidden p-6 sm:p-8 space-y-6">
+        
+        <!-- Kanban Header with Filter & Quick Add -->
+        <div class="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-3xl border border-cream-200 shadow-sm">
+          <div>
+            <h2 class="font-serif text-xl font-bold text-choco-950">Flujo de Taller de Cocina</h2>
+            <p class="text-xs text-choco-700">Arrastra las tarjetas entre columnas o utiliza los controles rápidos para actualizar el progreso.</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <button onclick="openNewOrderModal()" class="px-4 py-2.5 rounded-2xl bg-choco-900 text-cream-50 hover:bg-choco-800 text-xs font-semibold flex items-center gap-2 shadow-sm">
+              <i data-lucide="plus" class="w-4 h-4 text-goldp-400"></i>
+              <span>Ingresar Pedido Manual</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 5 Kanban Columns Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+          
+          <!-- Col 1: Recibido -->
+          <div class="flex flex-col bg-cream-100/60 rounded-3xl p-3.5 border border-cream-200 kanban-col" data-col="RECIBIDO" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'RECIBIDO')">
+            <div class="flex items-center justify-between pb-3 px-1 border-b border-cream-300">
+              <div class="flex items-center gap-2">
+                <span class="text-base">📥</span>
+                <span class="font-bold text-xs uppercase tracking-wider text-choco-950">Recibido</span>
+              </div>
+              <span id="colCount-RECIBIDO" class="w-5 h-5 rounded-full bg-white text-choco-950 font-bold text-[10px] flex items-center justify-center shadow-sm">0</span>
+            </div>
+            <div class="flex-1 space-y-3 pt-3 overflow-y-auto" id="kanbanCards-RECIBIDO">
+              <!-- Injected cards -->
+            </div>
+          </div>
+
+          <!-- Col 2: En Preparación -->
+          <div class="flex flex-col bg-cream-100/60 rounded-3xl p-3.5 border border-cream-200 kanban-col" data-col="PREPARACION" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'PREPARACION')">
+            <div class="flex items-center justify-between pb-3 px-1 border-b border-cream-300">
+              <div class="flex items-center gap-2">
+                <span class="text-base">👩‍🍳</span>
+                <span class="font-bold text-xs uppercase tracking-wider text-choco-950">En Prep</span>
+              </div>
+              <span id="colCount-PREPARACION" class="w-5 h-5 rounded-full bg-white text-choco-950 font-bold text-[10px] flex items-center justify-center shadow-sm">0</span>
+            </div>
+            <div class="flex-1 space-y-3 pt-3 overflow-y-auto" id="kanbanCards-PREPARACION">
+              <!-- Injected cards -->
+            </div>
+          </div>
+
+          <!-- Col 3: Horneado / Decorado -->
+          <div class="flex flex-col bg-cream-100/60 rounded-3xl p-3.5 border border-cream-200 kanban-col" data-col="HORNEADO" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'HORNEADO')">
+            <div class="flex items-center justify-between pb-3 px-1 border-b border-cream-300">
+              <div class="flex items-center gap-2">
+                <span class="text-base">🎂</span>
+                <span class="font-bold text-xs uppercase tracking-wider text-choco-950">Horneado</span>
+              </div>
+              <span id="colCount-HORNEADO" class="w-5 h-5 rounded-full bg-white text-choco-950 font-bold text-[10px] flex items-center justify-center shadow-sm">0</span>
+            </div>
+            <div class="flex-1 space-y-3 pt-3 overflow-y-auto" id="kanbanCards-HORNEADO">
+              <!-- Injected cards -->
+            </div>
+          </div>
+
+          <!-- Col 4: Control de Calidad -->
+          <div class="flex flex-col bg-cream-100/60 rounded-3xl p-3.5 border border-cream-200 kanban-col" data-col="CALIDAD" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'CALIDAD')">
+            <div class="flex items-center justify-between pb-3 px-1 border-b border-cream-300">
+              <div class="flex items-center gap-2">
+                <span class="text-base">✨</span>
+                <span class="font-bold text-xs uppercase tracking-wider text-choco-950">Calidad</span>
+              </div>
+              <span id="colCount-CALIDAD" class="w-5 h-5 rounded-full bg-white text-choco-950 font-bold text-[10px] flex items-center justify-center shadow-sm">0</span>
+            </div>
+            <div class="flex-1 space-y-3 pt-3 overflow-y-auto" id="kanbanCards-CALIDAD">
+              <!-- Injected cards -->
+            </div>
+          </div>
+
+          <!-- Col 5: Listo -->
+          <div class="flex flex-col bg-cream-100/60 rounded-3xl p-3.5 border border-cream-200 kanban-col" data-col="LISTO" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'LISTO')">
+            <div class="flex items-center justify-between pb-3 px-1 border-b border-cream-300">
+              <div class="flex items-center gap-2">
+                <span class="text-base">🚀</span>
+                <span class="font-bold text-xs uppercase tracking-wider text-choco-950">Listo</span>
+              </div>
+              <span id="colCount-LISTO" class="w-5 h-5 rounded-full bg-white text-choco-950 font-bold text-[10px] flex items-center justify-center shadow-sm">0</span>
+            </div>
+            <div class="flex-1 space-y-3 pt-3 overflow-y-auto" id="kanbanCards-LISTO">
+              <!-- Injected cards -->
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- TAB 3: GESTIÓN DE INVENTARIO (BOM) -->
+      <section id="adminTab-inventario" class="hidden p-6 sm:p-8 space-y-6">
+        
+        <!-- Header & Action -->
+        <div class="flex flex-wrap items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-cream-200 shadow-sm">
+          <div>
+            <h2 class="font-serif text-xl font-bold text-choco-950">Gestión de Insumos & Receta (BOM)</h2>
+            <p class="text-xs text-choco-700">Control de stock de materias primas finas con alertas visuales automáticas para asegurar la cadena de producción.</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <input type="text" id="inventorySearch" onkeyup="filterInventoryTable()" placeholder="Buscar insumo..." class="px-4 py-2 rounded-2xl border border-cream-300 text-xs focus:ring-2 focus:ring-goldp-400 focus:outline-none">
+            <button onclick="openRestockModal()" class="px-4 py-2 rounded-2xl bg-goldp-500 hover:bg-goldp-600 text-choco-950 font-bold text-xs transition-colors flex items-center gap-1.5 shadow-sm">
+              <i data-lucide="package-plus" class="w-4 h-4"></i>
+              <span>Reabastecer Insumo</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Inventory Table -->
+        <div class="bg-white rounded-3xl border border-cream-200 shadow-sm overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-cream-100/60 border-b border-cream-200 text-choco-800">
+                <tr>
+                  <th class="py-4 px-6 font-semibold">Materia Prima / Insumo</th>
+                  <th class="py-4 px-4 font-semibold">Unidad</th>
+                  <th class="py-4 px-4 font-semibold">Stock Actual</th>
+                  <th class="py-4 px-4 font-semibold">Stock Mínimo</th>
+                  <th class="py-4 px-6 font-semibold">Nivel de Reserva</th>
+                  <th class="py-4 px-4 font-semibold">Estado</th>
+                  <th class="py-4 px-6 text-right font-semibold">Acción</th>
+                </tr>
+              </thead>
+              <tbody id="inventoryTableBody" class="divide-y divide-cream-100">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- TAB 4: GESTIÓN DE DESPACHOS & FIRMA DIGITAL -->
+      <section id="adminTab-despachos" class="hidden p-6 sm:p-8 space-y-6">
+        
+        <div class="flex flex-wrap items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-cream-200 shadow-sm">
+          <div>
+            <h2 class="font-serif text-xl font-bold text-choco-950">Despachos & Entregas Climatizadas</h2>
+            <p class="text-xs text-choco-700">Rutas del día, control de temperatura a 14°C y recepción digital con firma de cliente.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 flex items-center gap-1">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Vehículo #1 Climatizado
+            </span>
+          </div>
+        </div>
+
+        <!-- Deliveries List -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="dispatchCardsContainer">
+          <!-- Injected via renderDispatches() -->
+        </div>
+
+      </section>
+
+      <!-- TAB 5: AJUSTES DEL TALLER -->
+      <section id="adminTab-ajustes" class="hidden p-6 sm:p-8 space-y-6">
+        <div class="bg-white p-8 rounded-3xl border border-cream-200 shadow-sm max-w-3xl space-y-6">
+          <h2 class="font-serif text-xl font-bold text-choco-950">Parámetros del Taller Artesanal</h2>
+          <div class="space-y-4 text-xs">
+            <div>
+              <label class="block font-bold text-choco-900 mb-1">Capacidad Máxima de Tortas de Autor por Día</label>
+              <input type="number" value="12" class="w-32 px-3 py-2 rounded-xl border border-cream-300 text-xs">
+            </div>
+            <div>
+              <label class="block font-bold text-choco-900 mb-1">Tiempo Mínimo de Aviso para Pedidos Personalizados</label>
+              <select class="px-3 py-2 rounded-xl border border-cream-300 text-xs">
+                <option>48 horas</option>
+                <option>72 horas</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-bold text-choco-900 mb-1">Temperatura de Transporte en Vehículos</label>
+              <input type="text" value="14°C ± 1°C" class="w-48 px-3 py-2 rounded-xl border border-cream-300 text-xs">
+            </div>
+            <div class="pt-4 border-t border-cream-200">
+              <button onclick="showToast('Ajustes guardados con éxito', 'success')" class="px-5 py-2.5 rounded-2xl bg-choco-900 text-cream-50 font-semibold hover:bg-choco-800 transition-colors">Guardar Parámetros</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- 🔐 MODAL DE AUTENTICACIÓN (LOGIN & REGISTRO) -->
+  <!-- ========================================== -->
+  <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-choco-950/60 backdrop-blur-sm hidden transition-opacity duration-200">
+    <div class="bg-white rounded-3xl shadow-luxury-lg max-w-md w-full border border-cream-200 max-h-[92vh] flex flex-col relative animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
+      
+      <!-- Close button -->
+      <button onclick="closeAuthModal()" class="absolute top-4 right-4 p-2 rounded-full text-choco-700 hover:bg-cream-100 hover:text-choco-950 transition-colors z-10" title="Cerrar ventana">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Modal Header (Fixed) -->
+      <div class="p-5 pb-3 text-center border-b border-cream-100 shrink-0 bg-cream-50/50">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-choco-900 to-choco-700 text-goldp-400 mx-auto flex items-center justify-center shadow-md mb-2 border border-goldp-500/30">
+          <i data-lucide="key-round" class="w-5 h-5"></i>
+        </div>
+        <h3 class="font-serif text-xl font-bold text-choco-950" id="authModalTitle">Iniciar Sesión</h3>
+        <p class="text-xs text-choco-700 mt-0.5">Accede a tu cuenta de cliente o al panel de taller</p>
+
+        <!-- Role Toggle: Acceso Cliente vs Acceso Administrador -->
+        <div class="mt-3 p-1 bg-cream-100 rounded-2xl flex border border-cream-200" id="authRoleToggle">
+          <button type="button" onclick="setAuthRole('cliente')" id="btnAuthRoleClient" class="flex-1 py-1.5 rounded-xl text-xs font-bold transition-all bg-white text-choco-950 shadow-sm flex items-center justify-center gap-1.5">
+            <i data-lucide="user" class="w-3.5 h-3.5"></i>
+            <span>Acceso Cliente</span>
+          </button>
+          <button type="button" onclick="setAuthRole('admin')" id="btnAuthRoleAdmin" class="flex-1 py-1.5 rounded-xl text-xs font-medium text-choco-700 hover:text-choco-950 transition-all flex items-center justify-center gap-1.5">
+            <i data-lucide="chef-hat" class="w-3.5 h-3.5"></i>
+            <span>Personal Cocina / Admin</span>
+          </button>
+        </div>
+
+        <!-- Quick Demo Credentials Fillers -->
+        <div class="mt-2.5 pt-2 border-t border-cream-200/60 flex items-center justify-between text-[11px]">
+          <span class="text-choco-700 font-medium">Credenciales Demo:</span>
+          <div class="flex gap-1.5">
+            <button type="button" onclick="fillDemoCredentials('cliente')" class="px-2 py-0.5 rounded-md bg-white border border-cream-200 text-choco-900 font-semibold hover:border-goldp-400 transition-colors">
+              👤 Cliente
+            </button>
+            <button type="button" onclick="fillDemoCredentials('admin')" class="px-2 py-0.5 rounded-md bg-white border border-cream-200 text-choco-900 font-semibold hover:border-goldp-400 transition-colors">
+              👩‍🍳 Admin Chef
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Body (Scrollable if needed) -->
+      <form id="authForm" onsubmit="handleAuthSubmit(event)" class="p-5 space-y-3.5 overflow-y-auto flex-1">
+        {% csrf_token %}
+        
+        <!-- ================= MODO INICIAR SESIÓN ================= -->
+        <div id="authLoginFields" class="space-y-3">
+          <div>
+            <label class="block text-xs font-bold text-choco-900 mb-1">Nombre de Usuario o Correo Electrónico</label>
+            <div class="relative">
+              <i data-lucide="user" class="w-4 h-4 absolute left-3.5 top-3 text-choco-700"></i>
+              <input type="text" id="authLoginInput" placeholder="Ej: admin o tu@correo.com" class="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-cream-300 text-xs focus:ring-2 focus:ring-goldp-400 focus:outline-none">
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-bold text-choco-900">Contraseña</label>
+              <button type="button" onclick="forgotPasswordPrompt()" id="btnForgotPassword" class="text-[11px] text-rosep-500 hover:underline">¿Olvidaste tu contraseña?</button>
+            </div>
+            <div class="relative">
+              <i data-lucide="lock" class="w-4 h-4 absolute left-3.5 top-3 text-choco-700"></i>
+              <input type="password" id="authLoginPassword" placeholder="••••••••" class="w-full pl-10 pr-10 py-2.5 rounded-2xl border border-cream-300 text-xs focus:ring-2 focus:ring-goldp-400 focus:outline-none">
+              <button type="button" onclick="togglePasswordVisibility('authLoginPassword')" class="absolute right-3.5 top-3 text-choco-700 hover:text-choco-950">
+                <i data-lucide="eye" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= MODO REGISTRO DE CUENTA ================= -->
+        <div id="authRegisterFields" class="hidden space-y-2.5">
+          <div>
+            <label class="block text-xs font-bold text-choco-900 mb-1">Nombre Completo</label>
+            <input type="text" id="authName" placeholder="Camila Soto Lyon" class="w-full px-4 py-2 rounded-2xl border border-cream-300 text-xs focus:ring-2 focus:ring-goldp-400 focus:outline-none">
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs font-bold text-choco-900 mb-1">Nombre de Usuario</label>
+              <input type="text" id="authUsername" placeholder="camilasoto" class="w-full px-3 py-2 rounded-2xl border border-cream-300 text-xs focus:ring-2 focus:ring-goldp-400 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-choco-900 mb-1">Teléfono Móvil</label>
+              <input type="tel" id="authPhone" placeholder="+56 9 8452 1190" class="w-full px-3 py-2 rounded-2xl border border-cream-300 text-xs focus:ring-2 focus:ring-goldp-400 focus:outline-none">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-choco-900 mb-1">Correo Electrónico</label>
+            <input type="email" id="authEmail" placeholder="tu@correo.com" class="w-full px-4 py-2 rounded-2xl border border-cream-300 text-xs focus:ring-2 focus:ring-goldp-400 focus:outline-none">
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs font-bold text-choco-900 mb-1">Contraseña</label>
+              <input type="password" id="authPassword" placeholder="••••••••" class="w-full px-3 py-2 rounded-2xl border border-cream-300 text-xs focus:ring-2 focus:ring-goldp-400 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-choco-900 mb-1">Confirmar</label>
+              <input type="password" id="authPasswordConfirm" placeholder="••••••••" class="w-full px-3 py-2 rounded-2xl border border-cream-300 text-xs focus:ring-2 focus:ring-goldp-400 focus:outline-none">
+            </div>
+          </div>
+          <p class="text-[10px] text-choco-700/70">Mínimo 8 caracteres para tu seguridad en PostgreSQL.</p>
+        </div>
+
+        <!-- Remember Me Checkbox -->
+        <div class="flex items-center gap-2 pt-0.5" id="rememberMeContainer">
+          <input type="checkbox" id="authRememberMe" class="rounded border-cream-300 text-choco-900 focus:ring-goldp-400">
+          <label for="authRememberMe" class="text-xs text-choco-700 select-none">Recordar mi sesión en este dispositivo</label>
+        </div>
+
+        <!-- Error Alert Container -->
+        <div id="authErrorAlert" class="hidden p-3 rounded-2xl bg-rose-50 text-rose-800 border border-rose-200 text-xs font-medium"></div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="authSubmitBtn" class="w-full py-3 px-4 rounded-2xl bg-choco-900 hover:bg-choco-800 text-goldp-300 font-semibold text-xs tracking-wider uppercase transition-all shadow-md mt-2 flex items-center justify-center gap-2">
+          <span id="authSubmitBtnText">Ingresar al Sistema</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+
+        <!-- Toggle Login / Register -->
+        <div class="pt-2 text-center border-t border-cream-100">
+          <p class="text-xs text-choco-700" id="authToggleText">
+            ¿Aún no tienes cuenta?
+            <button type="button" onclick="toggleAuthMode('register')" class="font-bold text-rosep-500 hover:underline ml-1">Regístrate aquí</button>
+          </p>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  
+
+      <!-- Quick Demo Credentials Fillers -->
+      <div class="px-6 pt-3 pb-1 bg-cream-50/70 border-b border-cream-100 flex items-center justify-between text-[11px]">
+        <span class="text-choco-700 font-medium">Credenciales Demo:</span>
+        <div class="flex gap-1.5">
+          <button type="button" onclick="fillDemoCredentials('cliente')" class="px-2 py-0.5 rounded-md bg-white border border-cream-200 text-choco-900 font-semibold hover:border-goldp-400 transition-colors">
+            👤 Cliente
+          </button>
+          <button type="button" onclick="fillDemoCredentials('admin')" class="px-2 py-0.5 rounded-md bg-white border border-cream-200 text-choco-900 font-semibold hover:border-goldp-400 transition-colors">
+            👩‍🍳 Admin Chef
+          </button>
+        </div>
+      </div>
+
+      <!-- Form Body -->
+      <form id="authForm" onsubmit="handleAuthSubmit(event)" class="p-6 space-y-4">
+        
+        <!-- Registration fields (only shown when registering) -->
+        <div id="authRegisterFields" class="hidden space-y-3.5">
+          <div>
+            <label class="block text-xs font-bold text-choco-900 mb-1">Nombre Completo</label>
+            <input type="text" id="authName" placeholder="Camila Soto Lyon" class="w-full px-4 py-2.5 rounded-2xl border border-cream-300 text-xs focus:ring-2 focus:ring-goldp-400 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-choco-900 mb-1">Nombre de Usuario</label>
+            <input type="text" id="authUsername" placeholder="camilasoto" class="w-full px-4 py-2.5 rounded-2xl border border-cream-300 text-xs focus:ring-2 focus:ring-goldp-400 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-choco-900 mb-1">Teléfono Móvil</label>
+            <input type="tel" id="authPhone" placeholder="+56 9 8452 1190" class="w-full px-4 py-2.5 rounded-2xl border border-cream-300 text-xs focus:ring-2 focus:ring-goldp-400 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-choco-900 mb-1">Confirmar Contraseña</label>
+            <input type="password" id="authPasswordConfirm" placeholder="••••••••" class="w-full px-4 py-2.5 rounded-2xl border border-cream-300 text-xs focus:ring-2 focus:ring-goldp-400 focus:outline-none">
+          </div>
+        </div>
+
+        <!-- Email Field -->
+        <div>
+          <label class="block text-xs font-bold text-choco-900 mb-1">Correo Electrónico</label>
+          <div class="relative">
+            <i data-lucide="mail" class="w-4 h-4 absolute left-3.5 top-3 text-choco-700"></i>
+            <input type="email" id="authEmail" required placeholder="tu@correo.com" class="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-cream-300 text-xs focus:ring-2 focus:ring-goldp-400 focus:outline-none">
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-bold text-choco-900">Contraseña</label>
+            <button type="button" onclick="forgotPasswordPrompt()" id="btnForgotPassword" class="text-[11px] text-rosep-500 hover:underline">¿Olvidaste tu contraseña?</button>
+          </div>
+          <div class="relative">
+            <i data-lucide="lock" class="w-4 h-4 absolute left-3.5 top-3 text-choco-700"></i>
+            <input type="password" id="authPassword" required placeholder="••••••••" class="w-full pl-10 pr-10 py-2.5 rounded-2xl border border-cream-300 text-xs focus:ring-2 focus:ring-goldp-400 focus:outline-none">
+            <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3.5 top-3 text-choco-700 hover:text-choco-950">
+              <i data-lucide="eye" id="authPasswordEyeIcon" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Remember Me Checkbox -->
+        <div class="flex items-center gap-2 pt-1" id="rememberMeContainer">
+          <input type="checkbox" id="authRememberMe" class="rounded border-cream-300 text-choco-900 focus:ring-goldp-400">
+          <label for="authRememberMe" class="text-xs text-choco-700 select-none">Recordar mi sesión en este dispositivo</label>
+        </div>
+
+        <!-- Submit Button -->
+        <div id="authErrorAlert" class="hidden p-3 rounded-2xl bg-rose-50 text-rose-800 border border-rose-200 text-xs font-medium"></div>
+        <button type="submit" id="authSubmitBtn" class="w-full py-3 px-4 rounded-2xl bg-choco-900 hover:bg-choco-800 text-goldp-300 font-semibold text-xs tracking-wider uppercase transition-all shadow-md mt-2 flex items-center justify-center gap-2">
+          <span id="authSubmitBtnText">Ingresar al Sistema</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+
+        <!-- Toggle Login / Register -->
+        <div class="pt-3 text-center border-t border-cream-100">
+          <p class="text-xs text-choco-700" id="authToggleText">
+            ¿Aún no tienes cuenta?
+            <button type="button" onclick="toggleAuthMode('register')" class="font-bold text-rosep-500 hover:underline ml-1">Regístrate aquí</button>
+          </p>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- ✍️ MODAL DE FIRMA DIGITAL & DESPACHO -->
+  <!-- ========================================== -->
+  <div id="signatureModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-choco-950/60 backdrop-blur-sm hidden transition-opacity duration-200">
+    <div class="bg-white rounded-3xl shadow-luxury-lg max-w-lg w-full border border-cream-200 overflow-hidden relative">
+      
+      <!-- Close button -->
+      <button onclick="closeSignatureModal()" class="absolute top-4 right-4 p-2 rounded-full text-choco-700 hover:bg-cream-100 hover:text-choco-950">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="p-6 border-b border-cream-100">
+        <div class="flex items-center gap-2 text-emerald-800 bg-emerald-100 w-fit px-2.5 py-1 rounded-full text-xs font-semibold mb-2">
+          <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+          <span>Recepción Conforme</span>
+        </div>
+        <h3 class="font-serif text-xl font-bold text-choco-950">Confirmar Entrega de Pedido</h3>
+        <p class="text-xs text-choco-700" id="sigModalOrderSubtitle">Pedido #DA-4281 · Pavlova Real Frutos del Bosque</p>
+      </div>
+
+      <div class="p-6 space-y-4">
+        
+        <div>
+          <label class="block text-xs font-bold text-choco-900 mb-1">Nombre de quien Recibe</label>
+          <input type="text" id="sigRecipientName" placeholder="Gonzalo Morales" class="w-full px-4 py-2 rounded-2xl border border-cream-300 text-xs focus:ring-2 focus:ring-goldp-400 focus:outline-none">
+        </div>
+
+        <!-- Canvas Signature Pad -->
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="block text-xs font-bold text-choco-900">Firma Digital del Receptor</label>
+            <button type="button" onclick="clearSignatureCanvas()" class="text-[11px] text-red-600 hover:underline flex items-center gap-1">
+              <i data-lucide="eraser" class="w-3 h-3"></i> Limpiar firma
+            </button>
+          </div>
+          <div class="border-2 border-dashed border-cream-300 rounded-2xl bg-cream-50/50 overflow-hidden relative">
+            <canvas id="signatureCanvas" width="450" height="150" class="w-full h-36 cursor-crosshair touch-none"></canvas>
+            <p class="absolute bottom-2 right-3 text-[10px] text-choco-700/60 pointer-events-none select-none">Firme con el cursor o el dedo</p>
+          </div>
+        </div>
+
+        <!-- Photo Proof Upload -->
+        <div>
+          <label class="block text-xs font-bold text-choco-900 mb-1">Foto Comprobante de Entrega (Opcional)</label>
+          <div class="flex items-center gap-3">
+            <input type="file" id="sigPhotoInput" accept="image/*" class="text-xs file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:bg-cream-100 file:text-choco-900 file:font-semibold hover:file:bg-cream-200">
+          </div>
+        </div>
+
+      </div>
+
+      <div class="p-6 pt-2 bg-cream-50/70 border-t border-cream-100 flex gap-3">
+        <button onclick="closeSignatureModal()" class="flex-1 py-2.5 rounded-2xl border border-cream-300 text-choco-800 text-xs font-semibold hover:bg-cream-100 transition-colors">
+          Cancelar
+        </button>
+        <button onclick="saveDeliverySignature()" class="flex-1 py-2.5 rounded-2xl bg-choco-900 text-goldp-300 text-xs font-bold hover:bg-choco-800 transition-colors flex items-center justify-center gap-1.5 shadow-sm">
+          <i data-lucide="check" class="w-4 h-4"></i>
+          <span>Registrar Entrega</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- 📦 MODAL REABASTECER INVENTARIO BOM -->
+  <!-- ========================================== -->
+  <div id="restockModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-choco-950/60 backdrop-blur-sm hidden transition-opacity duration-200">
+    <div class="bg-white rounded-3xl shadow-luxury-lg max-w-sm w-full border border-cream-200 overflow-hidden relative">
+      <div class="p-5 border-b border-cream-100">
+        <h3 class="font-serif text-lg font-bold text-choco-950">Reabastecer Insumo</h3>
+        <p class="text-xs text-choco-700">Actualiza el inventario del taller</p>
+      </div>
+      <div class="p-5 space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-choco-900 mb-1">Seleccionar Insumo</label>
+          <select id="restockIngredientSelect" class="w-full px-3 py-2 rounded-xl border border-cream-300 text-xs">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-choco-900 mb-1">Cantidad a Ingresar</label>
+          <input type="number" id="restockAmount" step="0.5" min="0.5" value="5.0" class="w-full px-3 py-2 rounded-xl border border-cream-300 text-xs">
+        </div>
+      </div>
+      <div class="p-5 pt-2 bg-cream-50 flex gap-2">
+        <button onclick="closeRestockModal()" class="flex-1 py-2 rounded-xl border border-cream-300 text-xs">Cancelar</button>
+        <button onclick="confirmRestockAction()" class="flex-1 py-2 rounded-xl bg-goldp-500 text-choco-950 font-bold text-xs hover:bg-goldp-400">Confirmar Ingreso</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- 🛒 CART DRAWER SLIDE-OVER -->
+  <!-- ========================================== -->
+  <div id="cartDrawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+    <div class="absolute inset-0 bg-choco-950/50 backdrop-blur-xs transition-opacity" onclick="toggleCartDrawer(false)"></div>
+    <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+      <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col border-l border-cream-200">
+        
+        <div class="p-6 border-b border-cream-100 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <i data-lucide="shopping-bag" class="w-5 h-5 text-goldp-600"></i>
+            <h3 class="font-serif text-lg font-bold text-choco-950">Tu Bolsa Gourmet</h3>
+          </div>
+          <button onclick="toggleCartDrawer(false)" class="p-2 rounded-full text-choco-700 hover:bg-cream-100">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <div class="flex-1 p-6 overflow-y-auto space-y-4" id="cartDrawerItems">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="p-6 border-t border-cream-100 bg-cream-50/60 space-y-3">
+          <div class="flex justify-between text-xs text-choco-800">
+            <span>Subtotal:</span>
+            <span class="font-bold text-choco-950" id="cartSubtotal">$0</span>
+          </div>
+          <div class="flex justify-between text-xs text-choco-800">
+            <span>Despacho Climatizado:</span>
+            <span class="font-semibold text-emerald-700">Incluido en Santiago</span>
+          </div>
+          <div class="flex justify-between text-base font-bold text-choco-950 pt-2 border-t border-cream-200">
+            <span>Total:</span>
+            <span class="font-serif text-xl" id="cartTotal">$0</span>
+          </div>
+
+          <button onclick="checkoutCartToKitchen()" class="w-full py-3.5 rounded-2xl bg-choco-900 text-goldp-300 font-bold text-xs uppercase tracking-wider hover:bg-choco-800 transition-all shadow-md flex items-center justify-center gap-2">
+            <i data-lucide="check" class="w-4 h-4"></i>
+            <span>Confirmar Pedido al Taller</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- 🔔 FLOATING TOAST NOTIFICATIONS -->
+  <!-- ========================================== -->
+  <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+
+  <!-- ========================================== -->
+  <!-- 💻 JAVASCRIPT MASTER APPLICATION LOGIC -->
+  <!-- ========================================== -->
+  <script>
+    // --- 1. INITIAL MOCK DATA & HYDRATION ---
+    const DEFAULT_PRODUCTS = [
+      {
+        id: 'p1',
+        name: 'Torta Nupcial Botánica',
+        category: 'tortas',
+        price: 55000,
+        portions: '15-20 porciones',
+        badge: 'Best Seller',
+        badgeColor: 'bg-goldp-200 text-goldp-800',
+        available: 'Disponible Bajo Reserva (48h)',
+        desc: 'Bizcocho húmedo de vainilla bourbon, ganache de frutos del bosque, flores orgánicas y pan de oro 24k.',
+        image: 'https://images.unsplash.com/photo-1535141192574-5d4897c13136?q=80&w=800&auto=format&fit=crop'
+      },
+      {
+        id: 'p2',
+        name: 'Torta Ópera Imperial',
+        category: 'tortas',
+        price: 48000,
+        portions: '12-16 porciones',
+        badge: 'Cacao Callebaut 70%',
+        badgeColor: 'bg-rosep-200 text-choco-950',
+        available: 'Disponible Hoy',
+        desc: 'Clásico francés con bizcocho Gioconda, café arábica de especialidad y ganache untuosa de chocolate amargo.',
+        image: 'https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?q=80&w=800&auto=format&fit=crop'
+      },
+      {
+        id: 'p3',
+        name: 'Cofre Macarons Parisinos (12 uds)',
+        category: 'alfajores',
+        price: 24500,
+        portions: 'Caja Regalo de Lujo',
+        badge: 'Edición Limitada',
+        badgeColor: 'bg-purple-100 text-purple-900',
+        available: 'Disponible Hoy',
+        desc: 'Harina de almendras finas con ganaches de pistacho Bronte, caramelo salado, frambuesa y lavanda.',
+        image: 'https://images.unsplash.com/photo-1569864358642-9d1684040f43?q=80&w=800&auto=format&fit=crop'
+      },
+      {
+        id: 'p4',
+        name: 'Alfajores de Masa Madre & Cacao Criollo',
+        category: 'alfajores',
+        price: 18000,
+        portions: 'Caja 6 unidades grandes',
+        badge: 'Artesanal',
+        badgeColor: 'bg-amber-100 text-amber-900',
+        available: 'Disponible Hoy',
+        desc: 'Masa sableé de fermentación lenta, relleno generoso de manjar de campo en olla de cobre.',
+        image: 'https://images.unsplash.com/photo-1587314168485-3236d6710814?q=80&w=800&auto=format&fit=crop'
+      },
+      {
+        id: 'p5',
+        name: 'Tarta Saint-Honoré Caramelo & Fleur de Sel',
+        category: 'tartas',
+        price: 38000,
+        portions: '8-10 porciones',
+        badge: 'Insignia Francesa',
+        badgeColor: 'bg-goldp-200 text-goldp-800',
+        available: 'Bajo Reserva',
+        desc: 'Base de hojaldre invertido con profiteroles glaseados en caramelo crujiente y crema diplomata de vainilla.',
+        image: 'https://images.unsplash.com/photo-1519869325930-281384150729?q=80&w=800&auto=format&fit=crop'
+      },
+      {
+        id: 'p6',
+        name: 'Éclairs Gourmet Colección Alta Costura',
+        category: 'tartas',
+        price: 21000,
+        portions: 'Box 4 variedades',
+        badge: 'Chef Choice',
+        badgeColor: 'bg-rosep-200 text-choco-950',
+        available: 'Disponible Hoy',
+        desc: 'Masa choux aireada rellena de cremas infusionadas en café Bourbon, pistacho y chocolate 70%.',
+        image: 'https://images.unsplash.com/photo-1587248720327-8eb72564be1e?q=80&w=800&auto=format&fit=crop'
+      },
+      {
+        id: 'p7',
+        name: 'Pavlova Real Frutos del Bosque',
+        category: 'postres',
+        price: 36000,
+        portions: '10-12 porciones',
+        badge: 'Gluten Free',
+        badgeColor: 'bg-emerald-100 text-emerald-800',
+        available: 'Disponible Hoy',
+        desc: 'Merengue suizo crujiente por fuera y marshmallow por dentro, crema mascarpone y frambuesas de Maule.',
+        image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=800&auto=format&fit=crop'
+      },
+      {
+        id: 'p8',
+        name: 'Entremet Espejo Frambuesa & Albahaca',
+        category: 'postres',
+        price: 42000,
+        portions: '8-10 porciones',
+        badge: 'Vanguardia',
+        badgeColor: 'bg-pink-100 text-pink-900',
+        available: 'Bajo Reserva',
+        desc: 'Glaceado espejo rojo rubí, mousse de chocolate blanco y corazón ácido de frutos rojos y albahaca.',
+        image: 'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?q=80&w=800&auto=format&fit=crop'
+      }
+    ];
+
+    let appData = {
+      user: {
+        isLoggedIn: false,
+        role: 'cliente',
+        name: 'Camila Soto',
+        email: 'camila.soto@email.com'
+      },
+      products: DEFAULT_PRODUCTS,
+      orders: [
+        {
+          id: 8842,
+          code: 'DA-2024-8842',
+          cliente: 'Camila Soto Lyon',
+          telefono: '+56 9 8452 1190',
+          descripcion: 'Torta Nupcial Botánica 3 Pisos',
+          diseno: 'Paleta ivory con detalles rosa cuarzo y pan de oro 24k en bordes.',
+          receta: 'Bizcocho Vainilla Bourbon · Ganache Frutos del Bosque · 20 porciones',
+          fecha_entrega: 'En 48 horas (17:30)',
+          precio_total: 185000,
+          estado: 'RECIBIDO',
+          chefNotes: 'Pedido reservado. Insumos separados en bodega.'
+        },
+        {
+          id: 5519,
+          code: 'DA-2024-5519',
+          cliente: 'Valentina Rossi',
+          telefono: '+56 9 9123 4455',
+          descripcion: 'Tarta Saint-Honoré Caramelo & Fleur de Sel',
+          diseno: 'Acabado clásico francés con caramelo crocante brillante.',
+          receta: 'Hojaldre invertido · Crema diplomata · 10 porciones',
+          fecha_entrega: 'Hoy a las 18:00',
+          precio_total: 48000,
+          estado: 'PREPARACION',
+          chefNotes: 'Profiteroles en batido. Crema diplomata reposando en frío.'
+        },
+        {
+          id: 6320,
+          code: 'DA-2024-6320',
+          cliente: 'Matías Larraín Errázuriz',
+          telefono: '+56 9 7334 8812',
+          descripcion: 'Box Éclair Gourmet (12 uds) & Torre Macarons',
+          diseno: 'Empaque de lujo rígido con lazo café chocolate.',
+          receta: 'Harina almendra · Pistacho puro Bronte DOP',
+          fecha_entrega: 'Hoy a las 16:00',
+          precio_total: 62500,
+          estado: 'HORNEADO',
+          chefNotes: 'Choux horneada a 180°C. Montando ganache de pistacho.'
+        },
+        {
+          id: 9104,
+          code: 'DA-2024-9104',
+          cliente: 'Sofía Echeverría',
+          telefono: '+56 9 6554 9921',
+          descripcion: 'Torta Ópera Imperial Chocolate Belga',
+          diseno: 'Glaseado espejo con caligrafía dorada de aniversario.',
+          receta: 'Callebaut 70% · Bizcocho Gioconda · Café arábica',
+          fecha_entrega: 'Hoy a las 14:30',
+          precio_total: 75000,
+          estado: 'CALIDAD',
+          chefNotes: 'Brillo verificado. En cámara de estabilización a 4°C.'
+        },
+        {
+          id: 4281,
+          code: 'DA-2024-4281',
+          cliente: 'Gonzalo Morales',
+          telefono: '+56 9 5214 7780',
+          descripcion: 'Pavlova Real Frutos del Bosque',
+          diseno: 'Corona de frambuesas de Maule, moras y menta.',
+          receta: 'Merengue suizo · Mascarpone fresco · Sin Gluten',
+          fecha_entrega: 'Hoy a las 13:00 (Ruta Vitacura)',
+          precio_total: 52000,
+          estado: 'LISTO',
+          chefNotes: 'Empacada en caja térmica climatizada con precinto.'
+        }
+      ],
+      ingredients: [
+        { id: 1, nombre: 'Harina de Almendras California', unidad: 'Kg', stock: 18.5, minimo: 10.0, categoria: 'Harinas' },
+        { id: 2, nombre: 'Chocolate Belga Callebaut 70%', unidad: 'Kg', stock: 24.0, minimo: 15.0, categoria: 'Chocolates' },
+        { id: 3, nombre: 'Mantequilla Francesa Elle & Vire AOP', unidad: 'Kg', stock: 4.2, minimo: 12.0, categoria: 'Lácteos' },
+        { id: 4, nombre: 'Vainas Vainilla Bourbon Madagascar', unidad: 'Uds', stock: 15.0, minimo: 30.0, categoria: 'Aromas' },
+        { id: 5, nombre: 'Pistacho Puro Bronte DOP Sicilia', unidad: 'Kg', stock: 2.1, minimo: 5.0, categoria: 'Pastas' },
+        { id: 6, nombre: 'Frambuesas Frescas Selección Maule', unidad: 'Kg', stock: 14.0, minimo: 8.0, categoria: 'Frutas' },
+        { id: 7, nombre: 'Azúcar Glass Impalpable Seda', unidad: 'Kg', stock: 45.0, minimo: 20.0, categoria: 'Azúcares' },
+        { id: 8, nombre: 'Láminas de Oro Comestible 24K', unidad: 'Lám', stock: 8.0, minimo: 20.0, categoria: 'Decoración' },
+        { id: 9, nombre: 'Flores Orgánicas Comestibles', unidad: 'Cajas', stock: 6.0, minimo: 10.0, categoria: 'Decoración' },
+        { id: 10, nombre: 'Crema de Leche Fresca 36% MG', unidad: 'Litros', stock: 35.0, minimo: 15.0, categoria: 'Lácteos' }
+      ],
+      dispatches: [
+        {
+          id: 1,
+          pedido_id: 4281,
+          cliente: 'Gonzalo Morales',
+          direccion: 'Av. Santa María 5800, Dpto 1402, Vitacura',
+          ruta: 'Ruta Oriente #1 (Climatizada)',
+          hora: '13:00',
+          estado: 'EN_RUTA',
+          firma: null
+        },
+        {
+          id: 2,
+          pedido_id: 9104,
+          cliente: 'Sofía Echeverría',
+          direccion: 'Av. Las Condes 12400, Casa 8, Lo Barnechea',
+          ruta: 'Ruta Cordillera #2 (Climatizada)',
+          hora: '14:30',
+          estado: 'PENDIENTE',
+          firma: null
+        },
+        {
+          id: 3,
+          pedido_id: 6320,
+          cliente: 'Matías Larraín',
+          direccion: 'Av. Providencia 1920, Of. 501, Providencia',
+          ruta: 'Ruta Centro-Providencia',
+          hora: '16:00',
+          estado: 'PENDIENTE',
+          firma: null
+        }
+      ],
+      cart: []
+    };
+
+    // Hydrate data from Django PostgreSQL context
+    try {
+      const serverScript = document.getElementById('serverAppData');
+      if (serverScript && serverScript.textContent.trim()) {
+        const serverData = JSON.parse(serverScript.textContent);
+        if (serverData.user) appData.user = serverData.user;
+        if (serverData.orders && serverData.orders.length) appData.orders = serverData.orders;
+        if (serverData.ingredients && serverData.ingredients.length) appData.ingredients = serverData.ingredients;
+        if (serverData.dispatches && serverData.dispatches.length) appData.dispatches = serverData.dispatches;
+      }
+    } catch(e) {
+      console.log('Error parsing server data:', e);
+    }
+
+        function getCsrfToken() {
+      const match = document.cookie.match(/csrftoken=([^;]+)/);
+      if (match) return match[1];
+      const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+      return csrfInput ? csrfInput.value : '';
+    }
+
+    function saveAppData() {
+      try {
+        localStorage.setItem('dulce_arte_store_v1', JSON.stringify(appData));
+      } catch(e) {}
+    }
+
+    // --- 2. NAVIGATION & MAIN VIEW SWITCHER ---
+    function switchMainView(view) {
+      const clientView = document.getElementById('clientViewContainer');
+      const adminView = document.getElementById('adminViewContainer');
+      const btnClient = document.getElementById('btnSwitchToClient');
+      const btnAdmin = document.getElementById('btnSwitchToAdmin');
+
+      if (view === 'client') {
+        clientView.classList.remove('hidden');
+        adminView.classList.add('hidden');
+        btnClient.className = "px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200 flex items-center gap-1.5 bg-goldp-500 text-choco-950 shadow-sm";
+        btnAdmin.className = "px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 flex items-center gap-1.5 text-cream-200 hover:text-white";
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        clientView.classList.add('hidden');
+        adminView.classList.remove('hidden');
+        btnAdmin.className = "px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200 flex items-center gap-1.5 bg-goldp-500 text-choco-950 shadow-sm";
+        btnClient.className = "px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 flex items-center gap-1.5 text-cream-200 hover:text-white";
+        renderKanban();
+        renderInventoryTable();
+        renderDispatches();
+        updateAdminKPIs();
+      }
+      lucide.createIcons();
+    }
+
+    function switchAdminTab(tab) {
+      const tabs = ['dashboard', 'kanban', 'inventario', 'despachos', 'ajustes'];
+      tabs.forEach(t => {
+        const sec = document.getElementById(`adminTab-${t}`);
+        const btn = document.getElementById(`tabBtn-${t}`);
+        if (sec && btn) {
+          if (t === tab) {
+            sec.classList.remove('hidden');
+            btn.className = "admin-tab-btn active w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl text-choco-950 bg-goldp-500 font-semibold transition-all";
+          } else {
+            sec.classList.add('hidden');
+            btn.className = "admin-tab-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl text-cream-200/80 hover:bg-choco-900 hover:text-white transition-all";
+          }
+        }
+      });
+
+      const titles = {
+        dashboard: 'Tablero General de Operaciones',
+        kanban: 'Taller de Cocina · Tablero Kanban',
+        inventario: 'Gestión de Inventario & Insumos (BOM)',
+        despachos: 'Despachos Climatizados & Entregas',
+        ajustes: 'Parámetros del Taller Artesanal'
+      };
+      document.getElementById('adminHeaderTitle').textContent = titles[tab] || 'Taller de Cocina';
+
+      if (tab === 'kanban') renderKanban();
+      if (tab === 'inventario') renderInventoryTable();
+      if (tab === 'despachos') renderDispatches();
+      if (tab === 'dashboard') updateAdminKPIs();
+      lucide.createIcons();
+    }
+
+    function toggleMobileNav() {
+      const menu = document.getElementById('mobileNavMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    // --- 3. PRODUCT CATALOG RENDERING & FILTERING ---
+    function renderCatalog(filter = 'todos') {
+      const grid = document.getElementById('productsGrid');
+      grid.innerHTML = '';
+
+      const filtered = filter === 'todos' 
+        ? appData.products 
+        : appData.products.filter(p => p.category === filter);
+
+      filtered.forEach(p => {
+        const card = document.createElement('div');
+        card.className = "group bg-white rounded-3xl p-3 border border-cream-200 shadow-sm hover:shadow-luxury transition-all duration-300 flex flex-col hover:-translate-y-1";
+        card.innerHTML = `
+          <div class="relative h-48 rounded-2xl overflow-hidden mb-3 bg-cream-100">
+            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute top-2.5 left-2.5 flex flex-col gap-1">
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase ${p.badgeColor} shadow-sm backdrop-blur-xs">
+                ${p.badge}
+              </span>
+            </div>
+            <div class="absolute bottom-2.5 right-2.5 bg-choco-950/80 backdrop-blur-md px-2 py-0.5 rounded-lg text-[10px] font-semibold text-goldp-300">
+              ${p.portions}
+            </div>
+          </div>
+
+          <div class="px-2 flex-1 flex flex-col">
+            <div class="text-[10px] font-semibold text-rosep-500 uppercase tracking-wider mb-0.5">${p.available}</div>
+            <h3 class="font-serif text-base font-bold text-choco-950 group-hover:text-goldp-600 transition-colors line-clamp-1">${p.name}</h3>
+            <p class="text-xs text-choco-700/80 mt-1 line-clamp-2 leading-relaxed flex-1">${p.desc}</p>
+            
+            <div class="pt-3 mt-2 border-t border-cream-100 flex items-center justify-between">
+              <div>
+                <span class="text-[10px] text-choco-700 block -mb-0.5">Precio</span>
+                <span class="font-serif text-lg font-bold text-choco-950">$${p.price.toLocaleString('es-CL')}</span>
+              </div>
+              <button onclick="addToCart('${p.id}')" class="p-2.5 rounded-2xl bg-cream-100 hover:bg-choco-900 text-choco-900 hover:text-goldp-300 transition-all shadow-xs" title="Añadir a la bolsa">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function filterCatalog(category) {
+      document.querySelectorAll('#categoryFilterContainer .cat-pill').forEach(btn => {
+        if (btn.getAttribute('data-cat') === category) {
+          btn.className = "cat-pill active px-4 py-2 rounded-2xl text-xs font-semibold transition-all duration-200 bg-choco-900 text-cream-50 shadow-sm";
+        } else {
+          btn.className = "cat-pill px-4 py-2 rounded-2xl text-xs font-semibold transition-all duration-200 bg-white text-choco-800 border border-cream-300 hover:border-goldp-400";
+        }
+      });
+      renderCatalog(category);
+    }
+
+    // --- 4. CUSTOM CAKE BUILDER (COTIZADOR) ---
+    let quoteState = {
+      cakeType: 'Torta Nupcial Botánica',
+      basePrice: 55000,
+      flavorExtra: 0,
+      flavorName: 'Vainilla Bourbon de Madagascar',
+      fillingExtra: 0,
+      fillingName: 'Ganache Frutos del Bosque & Maracuyá',
+      portionsMultiplier: 1.4,
+      portionsCount: 20,
+      finishExtra: 0,
+      finishName: 'Buttercream Suizo Seda',
+      photoRef: null
+    };
+
+    function selectCakeOption(group, name, price) {
+      if (group === 'type') {
+        quoteState.cakeType = name;
+        quoteState.basePrice = price;
+        document.querySelectorAll('#cakeTypeOptions .opt-btn').forEach(btn => {
+          if (btn.getAttribute('data-val') === name) {
+            btn.className = "opt-btn active p-3 rounded-2xl border-2 text-left transition-all border-goldp-500 bg-rosep-50/60";
+          } else {
+            btn.className = "opt-btn p-3 rounded-2xl border-2 text-left transition-all border-cream-200 hover:border-rosep-300";
+          }
+        });
+      } else if (group === 'finish') {
+        quoteState.finishName = name;
+        quoteState.finishExtra = price;
+        document.querySelectorAll('#finishOptions .opt-btn-finish').forEach(btn => {
+          if (btn.getAttribute('data-val') === name) {
+            btn.className = "opt-btn-finish active p-2.5 rounded-2xl border-2 text-left transition-all border-goldp-500 bg-rosep-50/60";
+          } else {
+            btn.className = "opt-btn-finish p-2.5 rounded-2xl border-2 text-left transition-all border-cream-200";
+          }
+        });
+      }
+      calculateCustomQuote();
+    }
+
+    function selectPortions(count, multiplier) {
+      quoteState.portionsCount = count;
+      quoteState.portionsMultiplier = multiplier;
+      document.querySelectorAll('#portionButtons .portion-btn').forEach(btn => {
+        if (parseInt(btn.getAttribute('data-portions')) === count) {
+          btn.className = "portion-btn active p-2.5 rounded-2xl border-2 text-center transition-all border-goldp-500 bg-rosep-50/60 text-choco-950";
+        } else {
+          btn.className = "portion-btn p-2.5 rounded-2xl border-2 text-center transition-all border-cream-200 text-choco-900";
+        }
+      });
+      document.getElementById('portionsDisplayBadge').textContent = `${count} porciones (x${multiplier})`;
+      calculateCustomQuote();
+    }
+
+    function calculateCustomQuote() {
+      const flavorSelect = document.getElementById('customFlavor');
+      const fillingSelect = document.getElementById('customFilling');
+
+      const flavorVal = flavorSelect.value;
+      const fillingVal = fillingSelect.value;
+
+      quoteState.flavorName = flavorVal.split(' (')[0];
+      quoteState.flavorExtra = flavorVal.includes('+$') ? parseInt(flavorVal.match(/\+\$([0-9\.]+)/)[1].replace('.', '')) : 0;
+
+      quoteState.fillingName = fillingVal.split(' (')[0];
+      quoteState.fillingExtra = fillingVal.includes('+$') ? parseInt(fillingVal.match(/\+\$([0-9\.]+)/)[1].replace('.', '')) : 0;
+
+      const subtotalBase = quoteState.basePrice + quoteState.flavorExtra + quoteState.fillingExtra + quoteState.finishExtra;
+      const finalPrice = Math.round(subtotalBase * quoteState.portionsMultiplier);
+
+      document.getElementById('summaryCakeType').textContent = quoteState.cakeType;
+      document.getElementById('summaryPortions').textContent = `${quoteState.portionsCount} porciones (x${quoteState.portionsMultiplier})`;
+      document.getElementById('summaryFlavor').textContent = quoteState.flavorName;
+      document.getElementById('summaryFilling').textContent = quoteState.fillingName;
+      document.getElementById('summaryFinish').textContent = quoteState.finishName;
+      document.getElementById('summaryTotalPrice').textContent = `$${finalPrice.toLocaleString('es-CL')}`;
+
+      return finalPrice;
+    }
+
+    function handleReferenceUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          quoteState.photoRef = e.target.result;
+          document.getElementById('uploadPlaceholder').classList.add('hidden');
+          const prev = document.getElementById('uploadPreviewContainer');
+          prev.classList.remove('hidden');
+          document.getElementById('uploadPreviewImg').src = e.target.result;
+          document.getElementById('uploadFilename').textContent = file.name;
+          showToast('Referencia cargada con éxito', 'success');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function clearUploadPreview(event) {
+      event.stopPropagation();
+      quoteState.photoRef = null;
+      document.getElementById('cakeRefInput').value = '';
+      document.getElementById('uploadPlaceholder').classList.remove('hidden');
+      document.getElementById('uploadPreviewContainer').classList.add('hidden');
+    }
+
+    async function submitCustomQuoteOrder() {
+      const dateVal = document.getElementById('customDeliveryDate').value;
+      const timeSlot = document.getElementById('customTimeSlot').value;
+      const notes = document.getElementById('customNotes').value;
+      const price = calculateCustomQuote();
+
+      let deliveryDateTime = new Date();
+      if (dateVal) {
+        deliveryDateTime = new Date(dateVal + 'T12:00:00');
+      } else {
+        deliveryDateTime.setDate(deliveryDateTime.getDate() + 3);
+      }
+
+      const payload = {
+        descripcion: `${quoteState.cakeType} (${quoteState.portionsCount} porciones). Bizcocho: ${quoteState.flavorName} · Relleno: ${quoteState.fillingName}`,
+        diseno: `${quoteState.finishName}. ${notes ? 'Notas: ' + notes : ''} [Horario: ${timeSlot}]`,
+        fecha_entrega: deliveryDateTime.toISOString(),
+        precio_total: price,
+        estado: 'RECIBIDO'
+      };
+
+      try {
+        const res = await fetch('/api/pedidos/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken()
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          const created = await res.json();
+          const newCode = `DA-2026-${created.id}`;
+          const newOrder = {
+            id: created.id,
+            code: newCode,
+            cliente: created.cliente_nombre || appData.user.name || 'Cliente',
+            telefono: created.cliente_telefono || '',
+            descripcion: created.descripcion,
+            diseno: created.diseno,
+            fecha_entrega: created.fecha_entrega ? created.fecha_entrega.split('T')[0] : '',
+            precio_total: parseFloat(created.precio_total),
+            estado: created.estado
+          };
+          appData.orders.unshift(newOrder);
+
+          try {
+            confetti({
+              particleCount: 80,
+              spread: 70,
+              origin: { y: 0.6 },
+              colors: ['#D4AF37', '#E8C5C8', '#3D2314', '#FAF8F5']
+            });
+          } catch(e) {}
+
+          showToast(`¡Pedido ${newCode} guardado permanentemente en PostgreSQL!`, 'success');
+          document.getElementById('trackerInput').value = newCode;
+          searchOrderTracking();
+          setTimeout(() => {
+            document.getElementById('rastreador').scrollIntoView({ behavior: 'smooth' });
+          }, 700);
+
+          renderKanban();
+          updateAdminKPIs();
+        } else {
+          if (res.status === 401 || res.status === 403) {
+            showToast('Por favor inicia sesión para guardar tu pedido en el sistema.', 'warning');
+            openAuthModal('cliente');
+          } else {
+            const err = await res.json();
+            showToast('Error al registrar pedido: ' + JSON.stringify(err), 'error');
+          }
+        }
+      } catch(err) {
+        showToast('Error de conexión al registrar pedido', 'error');
+      }
+    }
+
+    function saveQuoteDraft() {
+      showToast('Borrador de pastel guardado en tu cuenta', 'info');
+    }
+
+    // --- 5. REAL-TIME ORDER TRACKER ---
+    const KITCHEN_STAGES = [
+      { key: 'RECIBIDO', label: 'Recibido', icon: 'inbox', desc: 'Confirmado en agenda' },
+      { key: 'PREPARACION', label: 'En Preparación', icon: 'chef-hat', desc: 'Pesaje & masas' },
+      { key: 'HORNEADO', label: 'Horneado / Deco', icon: 'cake', desc: 'Horno de piso & ensamble' },
+      { key: 'CALIDAD', label: 'Control Calidad', icon: 'sparkles', desc: 'Cámara fría & cata' },
+      { key: 'LISTO', label: 'Listo / Despacho', icon: 'truck', desc: 'En ruta climatizada' },
+    ];
+
+    function searchOrderTracking() {
+      const query = document.getElementById('trackerInput').value.trim().toUpperCase();
+      const container = document.getElementById('trackerResultContainer');
+
+      if (!query) {
+        showToast('Ingresa un código de pedido', 'warning');
+        return;
+      }
+
+      const order = appData.orders.find(o => 
+        o.code.toUpperCase() === query || 
+        o.id.toString() === query || 
+        o.code.replace('DA-2024-', '').replace('DA-2026-', '') === query
+      );
+
+      if (!order) {
+        container.innerHTML = `
+          <div class="bg-white p-8 rounded-3xl border border-cream-200 text-center max-w-lg mx-auto shadow-sm">
+            <i data-lucide="alert-circle" class="w-10 h-10 text-rosep-400 mx-auto mb-2"></i>
+            <h4 class="font-serif text-lg font-bold text-choco-950">Código no encontrado</h4>
+            <p class="text-xs text-choco-700 mt-1">Verifica el código impreso en tu comprobante o prueba uno de los pedidos de ejemplo arriba.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      const currentStageIndex = KITCHEN_STAGES.findIndex(s => s.key === order.estado);
+
+      container.innerHTML = `
+        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-goldp-300/40 shadow-luxury animate-in fade-in duration-300">
+          
+          <div class="flex flex-wrap items-center justify-between pb-6 border-b border-cream-200 gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-goldp-500 text-choco-950 uppercase tracking-wider">
+                  ${order.code}
+                </span>
+                <span class="text-xs font-medium text-choco-700">Cliente: <strong>${order.cliente}</strong></span>
+              </div>
+              <h3 class="font-serif text-2xl font-bold text-choco-950 mt-1">${order.descripcion}</h3>
+              <p class="text-xs text-choco-700/80 mt-0.5">${order.receta}</p>
+            </div>
+
+            <div class="text-right">
+              <span class="text-[11px] text-choco-700 block">Fecha y Hora de Entrega:</span>
+              <span class="text-sm font-bold text-rosep-500 flex items-center gap-1">
+                <i data-lucide="calendar" class="w-4 h-4"></i> ${order.fecha_entrega}
+              </span>
+            </div>
+          </div>
+
+          <div class="py-8">
+            <div class="grid grid-cols-5 relative gap-2 sm:gap-4">
+              <div class="absolute top-6 left-6 right-6 h-1 bg-cream-200 -z-0"></div>
+              <div class="absolute top-6 left-6 h-1 bg-gradient-to-r from-choco-900 to-goldp-500 -z-0 transition-all duration-500" style="width: ${Math.max(0, currentStageIndex * 25)}%"></div>
+
+              ${KITCHEN_STAGES.map((stage, idx) => {
+                const isPassed = idx < currentStageIndex;
+                const isCurrent = idx === currentStageIndex;
+                
+                let circleClass = "bg-cream-100 text-cream-400 border-2 border-cream-300";
+                let pulseHtml = "";
+                let titleClass = "text-cream-400";
+
+                if (isPassed) {
+                  circleClass = "bg-choco-900 text-goldp-300 border-2 border-choco-900";
+                  titleClass = "text-choco-950 font-bold";
+                } else if (isCurrent) {
+                  circleClass = "bg-goldp-500 text-choco-950 border-2 border-goldp-400 shadow-gold-glow scale-110";
+                  titleClass = "text-choco-950 font-bold";
+                  pulseHtml = `<span class="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-rosep-500 animate-ping"></span>`;
+                }
+
+                return `
+                  <div class="flex flex-col items-center text-center relative z-10">
+                    <div class="w-12 h-12 rounded-2xl ${circleClass} flex items-center justify-center transition-all duration-300 relative shadow-sm">
+                      <i data-lucide="${stage.icon}" class="w-5 h-5"></i>
+                      ${pulseHtml}
+                    </div>
+                    <p class="text-xs mt-3 ${titleClass} line-clamp-1">${stage.label}</p>
+                    <p class="text-[10px] text-choco-700/70 hidden sm:block mt-0.5">${stage.desc}</p>
+                  </div>
+                `;
+              }).join('')}
+
+            </div>
+          </div>
+
+          <div class="mt-4 p-4 rounded-2xl bg-cream-50 border border-cream-200 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-2xl bg-rosep-200 text-choco-950 flex items-center justify-center font-bold text-sm">
+                👩‍🍳
+              </div>
+              <div>
+                <p class="text-xs font-bold text-choco-950">Bitácora de Taller:</p>
+                <p class="text-xs text-choco-700 italic">"${order.chefNotes || 'En proceso normal de elaboración artesanal.'}"</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-cream-200 text-xs">
+              <i data-lucide="thermometer-snowflake" class="w-4 h-4 text-emerald-600"></i>
+              <span class="text-choco-800">Cámara Fría: <strong>4.2°C</strong></span>
+            </div>
+          </div>
+
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    function testTrackCode(code) {
+      document.getElementById('trackerInput').value = code;
+      searchOrderTracking();
+    }
+
+    // --- 6. ADMIN KANBAN BOARD ---
+    let draggedOrderId = null;
+
+    function renderKanban() {
+      const cols = ['RECIBIDO', 'PREPARACION', 'HORNEADO', 'CALIDAD', 'LISTO'];
+      
+      cols.forEach(col => {
+        const container = document.getElementById(`kanbanCards-${col}`);
+        const countPill = document.getElementById(`colCount-${col}`);
+        if (!container) return;
+
+        const cardsInCol = appData.orders.filter(o => o.estado === col);
+        countPill.textContent = cardsInCol.length;
+        container.innerHTML = '';
+
+        cardsInCol.forEach(order => {
+          const card = document.createElement('div');
+          card.className = "bg-white p-3.5 rounded-2xl border border-cream-200 shadow-sm hover:shadow-luxury transition-all cursor-grab active:cursor-grabbing space-y-2.5";
+          card.draggable = true;
+          card.id = `order-card-${order.id}`;
+
+          card.ondragstart = (e) => {
+            draggedOrderId = order.id;
+            e.dataTransfer.setData('text/plain', order.id);
+            card.classList.add('opacity-50');
+          };
+          card.ondragend = () => {
+            card.classList.remove('opacity-50');
+          };
+
+          card.innerHTML = `
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-cream-100 text-choco-900 border border-cream-200">
+                #${order.id}
+              </span>
+              <span class="text-[10px] text-rosep-500 font-semibold flex items-center gap-1">
+                <i data-lucide="clock" class="w-3 h-3"></i> ${order.fecha_entrega.split('(')[0].trim()}
+              </span>
+            </div>
+
+            <div>
+              <h4 class="font-serif text-xs font-bold text-choco-950">${order.descripcion}</h4>
+              <p class="text-[11px] text-choco-700 font-medium">${order.cliente}</p>
+            </div>
+
+            <div class="text-[10px] text-choco-700/80 bg-cream-50 p-2 rounded-xl border border-cream-100">
+              <p class="line-clamp-2">${order.receta}</p>
+            </div>
+
+            <div class="flex items-center justify-between pt-1 text-[11px]">
+              <span class="font-bold text-choco-950">$${order.precio_total.toLocaleString('es-CL')}</span>
+              
+              <div class="flex items-center gap-1">
+                ${col !== 'RECIBIDO' ? `
+                  <button onclick="moveOrderStep(${order.id}, -1)" class="p-1 rounded-lg bg-cream-100 hover:bg-cream-200 text-choco-800" title="Retroceder etapa">
+                    <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
+                  </button>
+                ` : ''}
+                ${col !== 'LISTO' ? `
+                  <button onclick="moveOrderStep(${order.id}, 1)" class="p-1 rounded-lg bg-choco-900 hover:bg-choco-800 text-goldp-300 font-bold" title="Avanzar etapa">
+                    <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                  </button>
+                ` : `
+                  <span class="text-emerald-700 font-bold text-[10px]">Listo ✓</span>
+                `}
+              </div>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      });
+
+      document.getElementById('kanbanCountPill').textContent = appData.orders.length;
+      lucide.createIcons();
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      const colEl = e.currentTarget;
+      colEl.classList.add('drag-over');
+    }
+
+    function handleDragLeave(e) {
+      const colEl = e.currentTarget;
+      colEl.classList.remove('drag-over');
+    }
+
+    function handleDrop(e, targetCol) {
+      e.preventDefault();
+      const colEl = e.currentTarget;
+      colEl.classList.remove('drag-over');
+
+      if (!draggedOrderId) return;
+      const order = appData.orders.find(o => o.id === parseInt(draggedOrderId));
+      if (order && order.estado !== targetCol) {
+        const orderIdToMove = order.id;
+        fetch(`/api/pedidos/${orderIdToMove}/cambiar_estado/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken()
+          },
+          body: JSON.stringify({ estado: targetCol })
+        }).then(res => {
+          if (res.ok) {
+            order.estado = targetCol;
+            renderKanban();
+            updateAdminKPIs();
+            showToast(`Pedido #${order.id} actualizado a ${targetCol} en PostgreSQL`, 'success');
+          } else {
+            showToast('Error de permisos al mover pedido en base de datos', 'error');
+          }
+        }).catch(err => {
+          showToast('Error de conexión al mover pedido', 'error');
+        });
+      }
+      draggedOrderId = null;
+    }
+
+    async function moveOrderStep(orderId, delta) {
+      const order = appData.orders.find(o => o.id === orderId);
+      if (!order) return;
+
+      const cols = ['RECIBIDO', 'PREPARACION', 'HORNEADO', 'CALIDAD', 'LISTO'];
+      const currentIndex = cols.indexOf(order.estado);
+      const newIndex = currentIndex + delta;
+
+      if (newIndex >= 0 && newIndex < cols.length) {
+        const newStatus = cols[newIndex];
+        try {
+          const res = await fetch(`/api/pedidos/${orderId}/cambiar_estado/`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': getCsrfToken()
+            },
+            body: JSON.stringify({ estado: newStatus })
+          });
+          if (res.ok) {
+            order.estado = newStatus;
+            renderKanban();
+            updateAdminKPIs();
+            showToast(`Pedido #${order.id} guardado como ${newStatus} en PostgreSQL`, 'success');
+          } else {
+            const err = await res.json();
+            showToast(err.error || 'No tienes permisos para modificar el estado', 'error');
+          }
+        } catch(e) {
+          showToast('Error de conexión al actualizar estado', 'error');
+        }
+      }
+    }
+
+    // --- 7. ADMIN INVENTORY (BOM) & RESTOCK ---
+    function renderInventoryTable() {
+      const tbody = document.getElementById('inventoryTableBody');
+      const select = document.getElementById('restockIngredientSelect');
+      if (!tbody) return;
+
+      tbody.innerHTML = '';
+      select.innerHTML = '';
+
+      let criticalCount = 0;
+
+      appData.ingredients.forEach(item => {
+        const percent = Math.min(100, Math.round((item.stock / (item.minimo * 2)) * 100));
+        let statusBadge = '';
+        let barColor = 'bg-emerald-500';
+
+        if (item.stock <= item.minimo) {
+          criticalCount++;
+          statusBadge = '<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-red-100 text-red-700">CRÍTICO</span>';
+          barColor = 'bg-red-500';
+        } else if (item.stock <= item.minimo * 1.5) {
+          statusBadge = '<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">BAJO STOCK</span>';
+          barColor = 'bg-amber-500';
+        } else {
+          statusBadge = '<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">ÓPTIMO</span>';
+          barColor = 'bg-emerald-500';
+        }
+
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-cream-50 transition-colors";
+        tr.innerHTML = `
+          <td class="py-4 px-6 font-semibold text-choco-950 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full ${barColor}"></span>
+            <span>${item.nombre}</span>
+          </td>
+          <td class="py-4 px-4 text-choco-700">${item.unidad}</td>
+          <td class="py-4 px-4 font-bold text-choco-950">${item.stock} ${item.unidad}</td>
+          <td class="py-4 px-4 text-choco-700">${item.minimo} ${item.unidad}</td>
+          <td class="py-4 px-6">
+            <div class="w-full bg-cream-200 rounded-full h-2 overflow-hidden">
+              <div class="${barColor} h-2 rounded-full transition-all duration-500" style="width: ${percent}%"></div>
+            </div>
+            <span class="text-[10px] text-choco-700 font-medium">${percent}% de reserva</span>
+          </td>
+          <td class="py-4 px-4">${statusBadge}</td>
+          <td class="py-4 px-6 text-right">
+            <button onclick="quickRestock(${item.id})" class="px-3 py-1 rounded-xl bg-cream-100 hover:bg-goldp-500 hover:text-choco-950 text-choco-900 font-semibold text-[11px] transition-colors">
+              + Reponer
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+
+        const opt = document.createElement('option');
+        opt.value = item.id;
+        opt.textContent = `${item.nombre} (${item.stock} ${item.unidad})`;
+        select.appendChild(opt);
+      });
+
+      document.getElementById('inventoryAlertPill').textContent = criticalCount;
+      document.getElementById('kpiCriticalStock').textContent = criticalCount;
+    }
+
+    function quickRestock(id) {
+      document.getElementById('restockIngredientSelect').value = id;
+      openRestockModal();
+    }
+
+    function openRestockModal() {
+      document.getElementById('restockModal').classList.remove('hidden');
+    }
+
+    function closeRestockModal() {
+      document.getElementById('restockModal').classList.add('hidden');
+    }
+
+    async function confirmRestockAction() {
+      const ingId = parseInt(document.getElementById('restockIngredientSelect').value);
+      const amount = parseFloat(document.getElementById('restockAmount').value);
+
+      if (isNaN(amount) || amount <= 0) {
+        showToast('Ingresa una cantidad válida', 'warning');
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/ingredientes/${ingId}/reabastecer/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken()
+          },
+          body: JSON.stringify({
+            cantidad: amount,
+            motivo: 'Reabastecimiento de insumos de taller'
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const ing = appData.ingredients.find(i => i.id === ingId);
+          if (ing) {
+            ing.stock = data.nuevo_stock;
+          }
+          renderInventoryTable();
+          closeRestockModal();
+          showToast(data.mensaje || 'Ingrediente reabastecido en PostgreSQL', 'success');
+        } else {
+          const err = await res.json();
+          showToast(err.error || 'Error al reabastecer ingrediente', 'error');
+        }
+      } catch(e) {
+        showToast('Error de conexión al reabastecer', 'error');
+      }
+    }
+
+    // --- 8. DISPATCH MANAGEMENT & DIGITAL SIGNATURE CANVAS ---
+    let activeDispatchId = null;
+    let canvas = null;
+    let ctx = null;
+    let isDrawing = false;
+
+    function renderDispatches() {
+      const container = document.getElementById('dispatchCardsContainer');
+      if (!container) return;
+
+      container.innerHTML = '';
+      appData.dispatches.forEach(d => {
+        const order = appData.orders.find(o => o.id === d.pedido_id);
+        const card = document.createElement('div');
+        card.className = "bg-white p-5 rounded-3xl border border-cream-200 shadow-sm flex flex-col justify-between space-y-4";
+        
+        let statusBadge = d.estado === 'ENTREGADO' 
+          ? '<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">ENTREGADO</span>'
+          : d.estado === 'EN_RUTA'
+          ? '<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800 animate-pulse">EN RUTA 14°C</span>'
+          : '<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">PENDIENTE</span>';
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-choco-950">Pedido #${d.pedido_id}</span>
+              ${statusBadge}
+            </div>
+            <h4 class="font-serif text-base font-bold text-choco-950">${order ? order.descripcion : 'Creación Artesanal'}</h4>
+            <p class="text-xs text-choco-700 font-semibold mt-1">Receptor: ${d.cliente}</p>
+            <p class="text-xs text-choco-700/80 mt-0.5 flex items-center gap-1">
+              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-rosep-400"></i> ${d.direccion}
+            </p>
+          </div>
+
+          <div class="pt-3 border-t border-cream-100 flex items-center justify-between">
+            <span class="text-[11px] text-choco-700">Horario: <strong>${d.hora}</strong></span>
+            ${d.estado !== 'ENTREGADO' ? `
+              <button onclick="openSignatureModalForDispatch(${d.id})" class="px-3 py-1.5 rounded-xl bg-choco-900 text-goldp-300 hover:bg-choco-800 text-xs font-semibold flex items-center gap-1 transition-colors">
+                <i data-lucide="pen-tool" class="w-3.5 h-3.5"></i>
+                <span>Firmar Entrega</span>
+              </button>
+            ` : `
+              <span class="text-xs font-semibold text-emerald-700 flex items-center gap-1">
+                <i data-lucide="check-circle" class="w-4 h-4"></i> Firma Registrada
+              </span>
+            `}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function initSignatureCanvas() {
+      canvas = document.getElementById('signatureCanvas');
+      if (!canvas) return;
+      ctx = canvas.getContext('2d');
+      ctx.strokeStyle = '#3D2314';
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+          x: (clientX - rect.left) * (canvas.width / rect.width),
+          y: (clientY - rect.top) * (canvas.height / rect.height)
+        };
+      }
+
+      function start(e) {
+        isDrawing = true;
+        const pos = getPos(e);
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+        e.preventDefault();
+      }
+
+      function move(e) {
+        if (!isDrawing) return;
+        const pos = getPos(e);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+        e.preventDefault();
+      }
+
+      function stop() {
+        isDrawing = false;
+      }
+
+      canvas.addEventListener('mousedown', start);
+      canvas.addEventListener('mousemove', move);
+      canvas.addEventListener('mouseup', stop);
+      canvas.addEventListener('mouseleave', stop);
+
+      canvas.addEventListener('touchstart', start, { passive: false });
+      canvas.addEventListener('touchmove', move, { passive: false });
+      canvas.addEventListener('touchend', stop);
+    }
+
+    function clearSignatureCanvas() {
+      if (ctx && canvas) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    function openSignatureModalForDispatch(dispatchId) {
+      activeDispatchId = dispatchId;
+      const d = appData.dispatches.find(item => item.id === dispatchId);
+      if (d) {
+        document.getElementById('sigModalOrderSubtitle').textContent = `Pedido #${d.pedido_id} · ${d.cliente}`;
+        document.getElementById('sigRecipientName').value = d.cliente;
+      }
+      document.getElementById('signatureModal').classList.remove('hidden');
+      clearSignatureCanvas();
+      setTimeout(initSignatureCanvas, 100);
+      lucide.createIcons();
+    }
+
+    function closeSignatureModal() {
+      document.getElementById('signatureModal').classList.add('hidden');
+    }
+
+    async function saveDeliverySignature() {
+      const d = appData.dispatches.find(item => item.id === activeDispatchId);
+      if (!d) return;
+
+      const signatureData = canvas ? canvas.toDataURL() : 'signed';
+      try {
+        const res = await fetch(`/api/despachos/${activeDispatchId}/firmar_entrega/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken()
+          },
+          body: JSON.stringify({
+            receptor: 'Recepción Conforme (Firma Digital)'
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          d.estado = 'ENTREGADO';
+          d.firma = signatureData;
+
+          const order = appData.orders.find(o => o.id === d.pedido_id);
+          if (order) {
+            order.estado = 'LISTO';
+          }
+
+          renderDispatches();
+          renderKanban();
+          updateAdminKPIs();
+          closeSignatureModal();
+          showToast(data.mensaje || `¡Entrega guardada en PostgreSQL!`, 'success');
+
+          try {
+            confetti({
+              particleCount: 50,
+              spread: 60,
+              origin: { y: 0.7 }
+            });
+          } catch(e) {}
+        } else {
+          showToast('Error al confirmar entrega en base de datos', 'error');
+        }
+      } catch(e) {
+        showToast('Error de conexión al confirmar entrega', 'error');
+      }
+    }
+
+        // --- 9. AUTHENTICATION MODULE ---
+    let authCurrentRole = 'cliente';
+    let authMode = 'login';
+
+    function openAuthModal(role) {
+      if (role) setAuthRole(role);
+      const modal = document.getElementById('authModal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        lucide.createIcons();
+      }
+    }
+
+    function closeAuthModal() {
+      const modal = document.getElementById('authModal');
+      if (modal) modal.classList.add('hidden');
+      const errBox = document.getElementById('authErrorAlert');
+      if (errBox) { errBox.classList.add('hidden'); errBox.innerHTML = ''; }
+    }
+
+    function setAuthRole(role) {
+      authCurrentRole = role;
+      const btnClient = document.getElementById('btnAuthRoleClient');
+      const btnAdmin = document.getElementById('btnAuthRoleAdmin');
+
+      if (role === 'cliente') {
+        if (btnClient) btnClient.className = "flex-1 py-1.5 rounded-xl text-xs font-bold transition-all bg-white text-choco-950 shadow-sm flex items-center justify-center gap-1.5";
+        if (btnAdmin) btnAdmin.className = "flex-1 py-1.5 rounded-xl text-xs font-medium text-choco-700 hover:text-choco-950 transition-all flex items-center justify-center gap-1.5";
+      } else {
+        if (btnAdmin) btnAdmin.className = "flex-1 py-1.5 rounded-xl text-xs font-bold transition-all bg-white text-choco-950 shadow-sm flex items-center justify-center gap-1.5";
+        if (btnClient) btnClient.className = "flex-1 py-1.5 rounded-xl text-xs font-medium text-choco-700 hover:text-choco-950 transition-all flex items-center justify-center gap-1.5";
+      }
+    }
+
+    function toggleAuthMode(mode) {
+      authMode = mode;
+      const loginFields = document.getElementById('authLoginFields');
+      const regFields = document.getElementById('authRegisterFields');
+      const title = document.getElementById('authModalTitle');
+      const submitText = document.getElementById('authSubmitBtnText');
+      const toggleText = document.getElementById('authToggleText');
+      const rememberBox = document.getElementById('rememberMeContainer');
+      const errBox = document.getElementById('authErrorAlert');
+      if (errBox) { errBox.classList.add('hidden'); errBox.innerHTML = ''; }
+
+      if (mode === 'register') {
+        if (loginFields) loginFields.classList.add('hidden');
+        if (regFields) regFields.classList.remove('hidden');
+        if (title) title.textContent = 'Crear Cuenta Gourmet';
+        if (submitText) submitText.textContent = 'Registrarme & Guardar en Base de Datos';
+        if (rememberBox) rememberBox.classList.add('hidden');
+        if (toggleText) toggleText.innerHTML = `¿Ya tienes cuenta? <button type="button" onclick="toggleAuthMode('login')" class="font-bold text-rosep-500 hover:underline ml-1">Inicia sesión</button>`;
+      } else {
+        if (regFields) regFields.classList.add('hidden');
+        if (loginFields) loginFields.classList.remove('hidden');
+        if (title) title.textContent = 'Iniciar Sesión';
+        if (submitText) submitText.textContent = 'Ingresar al Sistema';
+        if (rememberBox) rememberBox.classList.remove('hidden');
+        if (toggleText) toggleText.innerHTML = `¿Aún no tienes cuenta? <button type="button" onclick="toggleAuthMode('register')" class="font-bold text-rosep-500 hover:underline ml-1">Regístrate aquí</button>`;
+      }
+      lucide.createIcons();
+    }
+
+    function fillDemoCredentials(role) {
+      setAuthRole(role);
+      if (role === 'cliente') {
+        if (authMode === 'register') {
+          const nameEl = document.getElementById('authName');
+          const userEl = document.getElementById('authUsername');
+          const phoneEl = document.getElementById('authPhone');
+          const emailEl = document.getElementById('authEmail');
+          const passEl = document.getElementById('authPassword');
+          const passConfEl = document.getElementById('authPasswordConfirm');
+          if (nameEl) nameEl.value = 'Camila Soto Lyon';
+          if (userEl) userEl.value = 'camilasoto';
+          if (phoneEl) phoneEl.value = '+56 9 8452 1190';
+          if (emailEl) emailEl.value = 'camila.soto@email.com';
+          if (passEl) passEl.value = 'DulceArte2026!';
+          if (passConfEl) passConfEl.value = 'DulceArte2026!';
+        } else {
+          const inputEl = document.getElementById('authLoginInput');
+          const passEl = document.getElementById('authLoginPassword');
+          if (inputEl) inputEl.value = 'camila.soto@email.com';
+          if (passEl) passEl.value = 'DulceArte2026!';
+        }
+      } else {
+        if (authMode === 'register') {
+          toggleAuthMode('login');
+        }
+        const inputEl = document.getElementById('authLoginInput');
+        const passEl = document.getElementById('authLoginPassword');
+        if (inputEl) inputEl.value = 'admin';
+        if (passEl) passEl.value = 'admin123';
+      }
+    }
+
+    function togglePasswordVisibility(fieldId) {
+      const targetId = fieldId || (authMode === 'register' ? 'authPassword' : 'authLoginPassword');
+      const passInput = document.getElementById(targetId);
+      if (!passInput) return;
+      passInput.type = passInput.type === 'password' ? 'text' : 'password';
+    }
+
+    function forgotPasswordPrompt() {
+      const email = document.getElementById('authLoginInput')?.value || document.getElementById('authEmail')?.value || 'tu correo';
+      showToast(`Hemos enviado un enlace de recuperación a ${email}`, 'info');
+    }
+
+    async function handleAuthSubmit(e) {
+      e.preventDefault();
+      const errBox = document.getElementById('authErrorAlert');
+      if (errBox) { errBox.classList.add('hidden'); errBox.innerHTML = ''; }
+
+      const submitBtn = document.getElementById('authSubmitBtn');
+      const submitText = document.getElementById('authSubmitBtnText');
+      const originalText = submitText ? submitText.textContent : 'Enviar';
+      if (submitBtn) submitBtn.disabled = true;
+      if (submitText) submitText.textContent = 'Procesando con PostgreSQL...';
+
+      if (authMode === 'register') {
+        const nombre = (document.getElementById('authName')?.value || '').trim();
+        const username = (document.getElementById('authUsername')?.value || '').trim();
+        const correo = (document.getElementById('authEmail')?.value || '').trim();
+        const telefono = (document.getElementById('authPhone')?.value || '').trim();
+        const password1 = document.getElementById('authPassword')?.value || '';
+        const password2 = document.getElementById('authPasswordConfirm')?.value || '';
+
+        if (!nombre || !username || !correo || !telefono || !password1 || !password2) {
+          if (errBox) {
+            errBox.textContent = 'Por favor completa todos los campos del registro.';
+            errBox.classList.remove('hidden');
+            errBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+          if (submitBtn) submitBtn.disabled = false;
+          if (submitText) submitText.textContent = originalText;
+          return;
+        }
+
+        if (password1 !== password2) {
+          if (errBox) {
+            errBox.textContent = 'Las contraseñas no coinciden. Por favor verifícalas.';
+            errBox.classList.remove('hidden');
+            errBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+          if (submitBtn) submitBtn.disabled = false;
+          if (submitText) submitText.textContent = originalText;
+          return;
+        }
+
+        try {
+          const res = await fetch('/registro/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': getCsrfToken()
+            },
+            body: JSON.stringify({
+              nombre: nombre,
+              username: username,
+              correo: correo,
+              telefono: telefono,
+              password1: password1,
+              password2: password2
+            })
+          });
+
+          const data = await res.json();
+          if (res.ok && data.success) {
+            closeAuthModal();
+            showToast(data.message || '¡Tu cuenta y cliente han sido guardados en PostgreSQL!', 'success');
+            setTimeout(() => {
+              window.location.href = data.redirect || '/';
+            }, 600);
+          } else {
+            if (submitBtn) submitBtn.disabled = false;
+            if (submitText) submitText.textContent = originalText;
+            let msg = 'Error en el registro:<br>';
+            if (data.errors) {
+              const list = [];
+              for (const k in data.errors) {
+                list.push(`• <strong>${k}</strong>: ${data.errors[k].join(', ')}`);
+              }
+              msg += list.join('<br>');
+            } else if (data.error) {
+              msg = data.error;
+            }
+            if (errBox) {
+              errBox.innerHTML = msg;
+              errBox.classList.remove('hidden');
+              errBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else {
+              showToast(msg, 'error');
+            }
+          }
+        } catch(err) {
+          if (submitBtn) submitBtn.disabled = false;
+          if (submitText) submitText.textContent = originalText;
+          showToast('Error de conexión con el servidor al registrarse', 'error');
+        }
+      } else {
+        // Modo Inicio de Sesión
+        const usernameOrEmail = (document.getElementById('authLoginInput')?.value || '').trim();
+        const password = document.getElementById('authLoginPassword')?.value || '';
+
+        if (!usernameOrEmail || !password) {
+          if (errBox) {
+            errBox.textContent = 'Por favor ingresa tu usuario o correo y contraseña.';
+            errBox.classList.remove('hidden');
+          }
+          if (submitBtn) submitBtn.disabled = false;
+          if (submitText) submitText.textContent = originalText;
+          return;
+        }
+
+        try {
+          const res = await fetch('/login/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': getCsrfToken()
+            },
+            body: JSON.stringify({
+              username: usernameOrEmail,
+              password: password
+            })
+          });
+
+          const data = await res.json();
+          if (res.ok && data.success) {
+            closeAuthModal();
+            showToast(`¡Sesión iniciada con éxito!`, 'success');
+            setTimeout(() => {
+              window.location.href = data.redirect || '/';
+            }, 600);
+          } else {
+            if (submitBtn) submitBtn.disabled = false;
+            if (submitText) submitText.textContent = originalText;
+            const msg = data.error || 'Usuario o contraseña incorrectos.';
+            if (errBox) {
+              errBox.textContent = msg;
+              errBox.classList.remove('hidden');
+            } else {
+              showToast(msg, 'error');
+            }
+          }
+        } catch(err) {
+          if (submitBtn) submitBtn.disabled = false;
+          if (submitText) submitText.textContent = originalText;
+          showToast('Error de conexión con el servidor al iniciar sesión', 'error');
+        }
+      }
+    }
+
+    async function handleLogout() {
+      try {
+        await fetch('/logout/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken()
+          }
+        });
+      } catch(e) {}
+      window.location.href = '/';
+    }
+
+    // --- 10. SHOPPING CART & CHECKOUT ---
+    function addToCart(productId) {
+      const prod = appData.products.find(p => p.id === productId);
+      if (!prod) return;
+
+      const existing = appData.cart.find(i => i.id === productId);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        appData.cart.push({ ...prod, qty: 1 });
+      }
+
+      updateCartBadge();
+      showToast(`"${prod.name}" añadido a la bolsa`, 'success');
+    }
+
+    function updateCartBadge() {
+      const totalQty = appData.cart.reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById('cartCountBadge').textContent = totalQty;
+      saveAppData();
+    }
+
+    function toggleCartDrawer(open) {
+      const drawer = document.getElementById('cartDrawer');
+      if (open) {
+        renderCartItems();
+        drawer.classList.remove('hidden');
+      } else {
+        drawer.classList.add('hidden');
+      }
+      lucide.createIcons();
+    }
+
+    function renderCartItems() {
+      const container = document.getElementById('cartDrawerItems');
+      container.innerHTML = '';
+
+      if (appData.cart.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12 text-choco-700">
+            <i data-lucide="shopping-bag" class="w-12 h-12 mx-auto text-cream-300 mb-2"></i>
+            <p class="font-serif text-base font-bold text-choco-950">Tu bolsa está vacía</p>
+            <p class="text-xs text-choco-700/80 mt-1">Explora nuestro menú y añade tus creaciones favoritas.</p>
+          </div>
+        `;
+        document.getElementById('cartSubtotal').textContent = '$0';
+        document.getElementById('cartTotal').textContent = '$0';
+        return;
+      }
+
+      let subtotal = 0;
+      appData.cart.forEach((item, index) => {
+        const itemTotal = item.price * item.qty;
+        subtotal += itemTotal;
+
+        const row = document.createElement('div');
+        row.className = "flex items-center gap-3 p-3 rounded-2xl bg-cream-50 border border-cream-200";
+        row.innerHTML = `
+          <img src="${item.image}" alt="${item.name}" class="w-14 h-14 object-cover rounded-xl border border-cream-200">
+          <div class="flex-1 min-w-0">
+            <h4 class="text-xs font-bold text-choco-950 truncate">${item.name}</h4>
+            <span class="text-xs font-semibold text-choco-800">$${item.price.toLocaleString('es-CL')}</span>
+            <div class="flex items-center gap-2 mt-1">
+              <button onclick="changeCartQty(${index}, -1)" class="w-5 h-5 rounded-md bg-white border border-cream-300 text-choco-900 text-xs font-bold flex items-center justify-center">-</button>
+              <span class="text-xs font-bold">${item.qty}</span>
+              <button onclick="changeCartQty(${index}, 1)" class="w-5 h-5 rounded-md bg-white border border-cream-300 text-choco-900 text-xs font-bold flex items-center justify-center">+</button>
+            </div>
+          </div>
+          <button onclick="removeCartItem(${index})" class="text-choco-700 hover:text-red-600 p-1">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+          </button>
+        `;
+        container.appendChild(row);
+      });
+
+      document.getElementById('cartSubtotal').textContent = `$${subtotal.toLocaleString('es-CL')}`;
+      document.getElementById('cartTotal').textContent = `$${subtotal.toLocaleString('es-CL')}`;
+    }
+
+    function changeCartQty(index, delta) {
+      if (appData.cart[index]) {
+        appData.cart[index].qty += delta;
+        if (appData.cart[index].qty <= 0) {
+          appData.cart.splice(index, 1);
+        }
+        updateCartBadge();
+        renderCartItems();
+      }
+    }
+
+    function removeCartItem(index) {
+      appData.cart.splice(index, 1);
+      updateCartBadge();
+      renderCartItems();
+    }
+
+    function checkoutCartToKitchen() {
+      if (appData.cart.length === 0) {
+        showToast('Tu bolsa está vacía', 'warning');
+        return;
+      }
+
+      const total = appData.cart.reduce((s, i) => s + (i.price * i.qty), 0);
+      const itemsList = appData.cart.map(i => `${i.qty}x ${i.name}`).join(', ');
+
+      const newId = Math.floor(1000 + Math.random() * 9000);
+      const newOrder = {
+        id: newId,
+        code: `DA-2026-${newId}`,
+        cliente: appData.user.name || 'Cliente Vitrina',
+        telefono: '+56 9 8452 1190',
+        descripcion: `Bolsa Gourmet: ${itemsList}`,
+        diseno: 'Presentación en cajas de lujo con lazo de terciopelo',
+        receta: 'Colección de vitrina lista para despacho climatizado',
+        fecha_entrega: 'Hoy (18:00)',
+        precio_total: total,
+        estado: 'RECIBIDO',
+        chefNotes: 'Pedido ingresado desde carrito de compras.'
+      };
+
+      appData.orders.unshift(newOrder);
+      appData.cart = [];
+      updateCartBadge();
+      saveAppData();
+      toggleCartDrawer(false);
+
+      showToast(`¡Pedido #${newId} confirmado y enviado a Cocina!`, 'success');
+      
+      try {
+        confetti({
+          particleCount: 70,
+          spread: 60,
+          origin: { y: 0.6 }
+        });
+      } catch(e) {}
+    }
+
+    // --- 11. ADMIN DASHBOARD KPIS & MODAL MANUAL ORDER ---
+    function updateAdminKPIs() {
+      const activeCount = appData.orders.length;
+      const salesTotal = appData.orders.reduce((sum, o) => sum + (o.precio_total || 0), 0);
+
+      const kpiOrders = document.getElementById('kpiActiveOrders');
+      const kpiSales = document.getElementById('kpiDailySales');
+      if (kpiOrders) kpiOrders.textContent = activeCount;
+      if (kpiSales) kpiSales.textContent = `$${salesTotal.toLocaleString('es-CL')}`;
+
+      const tbody = document.getElementById('adminDashboardOrdersTable');
+      if (tbody) {
+        tbody.innerHTML = '';
+        appData.orders.slice(0, 5).forEach(o => {
+          const tr = document.createElement('tr');
+          tr.className = "hover:bg-cream-50 transition-colors";
+          tr.innerHTML = `
+            <td class="py-3 font-bold text-choco-950">#${o.id}</td>
+            <td class="py-3 text-choco-800">${o.cliente}</td>
+            <td class="py-3 text-choco-700 text-[11px] truncate max-w-[140px]">${o.descripcion}</td>
+            <td class="py-3 text-choco-700">${o.fecha_entrega.split('(')[0]}</td>
+            <td class="py-3 font-semibold text-choco-950">$${o.precio_total.toLocaleString('es-CL')}</td>
+            <td class="py-3">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cream-200 text-choco-950">
+                ${o.estado}
+              </span>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+    }
+
+    async function openNewOrderModal() {
+      const cliente = prompt('Nombre del Cliente VIP:', 'Isidora Amenábar');
+      if (!cliente) return;
+      const descripcion = prompt('Descripción del Pedido:', 'Torta Especial Pistacho & Frambuesa');
+      if (!descripcion) return;
+
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      try {
+        const res = await fetch('/api/pedidos/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken()
+          },
+          body: JSON.stringify({
+            descripcion: descripcion,
+            diseno: 'Diseño express en mesón de taller.',
+            fecha_entrega: tomorrow.toISOString(),
+            precio_total: 68000,
+            estado: 'RECIBIDO'
+          })
+        });
+
+        if (res.ok) {
+          const created = await res.json();
+          const newOrder = {
+            id: created.id,
+            code: `DA-2026-${created.id}`,
+            cliente: created.cliente_nombre || cliente,
+            telefono: created.cliente_telefono || '+56 9 9876 5432',
+            descripcion: created.descripcion,
+            diseno: created.diseno,
+            fecha_entrega: created.fecha_entrega ? created.fecha_entrega.split('T')[0] : 'Mañana a las 12:00',
+            precio_total: parseFloat(created.precio_total),
+            estado: created.estado
+          };
+          appData.orders.unshift(newOrder);
+          renderKanban();
+          updateAdminKPIs();
+          showToast(`Nuevo pedido #${created.id} guardado en PostgreSQL`, 'success');
+        } else {
+          showToast('Error al crear pedido en base de datos', 'error');
+        }
+      } catch(e) {
+        showToast('Error de conexión al crear pedido', 'error');
+      }
+    }
+
+    // --- 12. TOAST NOTIFICATION UTILITY ---
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      
+      let bg = 'bg-choco-950 text-cream-50 border-goldp-500/40';
+      let icon = 'info';
+
+      if (type === 'success') {
+        bg = 'bg-choco-950 text-cream-50 border-emerald-500/50';
+        icon = 'check-circle-2';
+      } else if (type === 'warning') {
+        bg = 'bg-choco-950 text-cream-50 border-amber-500/50';
+        icon = 'alert-triangle';
+      }
+
+      toast.className = `${bg} px-4 py-3 rounded-2xl shadow-luxury-lg border text-xs font-medium flex items-center gap-2.5 pointer-events-auto transform transition-all duration-300 translate-y-4 opacity-0`;
+      toast.innerHTML = `
+        <i data-lucide="${icon}" class="w-4 h-4 text-goldp-400 shrink-0"></i>
+        <span>${message}</span>
+      `;
+
+      container.appendChild(toast);
+      lucide.createIcons();
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-4', 'opacity-0');
+      }, 20);
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    // --- 13. DOM INITIALIZATION ON LOAD ---
+    document.addEventListener('DOMContentLoaded', () => {
+      const dateInput = document.getElementById('customDeliveryDate');
+      if (dateInput) {
+        const minDate = new Date();
+        minDate.setDate(minDate.getDate() + 2);
+        dateInput.min = minDate.toISOString().split('T')[0];
+        dateInput.value = minDate.toISOString().split('T')[0];
+      }
+
+      renderCatalog();
+      calculateCustomQuote();
+      testTrackCode('DA-2024-8842');
+      updateCartBadge();
+      updateAdminKPIs();
+      lucide.createIcons();
+    });
+  </script>
+
+</body>
+</html>
